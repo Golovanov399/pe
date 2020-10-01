@@ -11,6 +11,7 @@ class FFTCrt : public IFFT<modulo_type, modulo_type, N> {
 	static constexpr int mod1 = 167772161;	// 2^25
 	static constexpr int mod2 = 469762049;	// 2^26
 	static constexpr int mod3 = 754974721;	// 2^24
+	static constexpr LI modprod = (LI)mod1 * mod2 * mod3;
 	using Mint1 = Modular<mod1>;
 	using Mint2 = Modular<mod2>;
 	using Mint3 = Modular<mod3>;
@@ -37,12 +38,16 @@ public:
 		auto r3 = ntt3.multiply(a3, b3);
 		vector<modulo_type> res(r1.size());
 		for (int i = 0; i < (int)res.size(); ++i) {
-			res[i] = crt(vector<Remainder<LI>>{{mod1, r1[i].val}, {mod2, r2[i].val}, {mod3, r3[i].val}}).rem % modulo_type::mod();
+			res[i] = (c1 * r1[i].val + c2 * r2[i].val + c3 * r3[i].val) % modprod % modulo_type::mod();
 		}
 		return res;
 	}
 
 protected:
+	LI c1 = crt(vector<Remainder<LI>>{{mod1, 1}, {mod2, 0}, {mod3, 0}}).rem;
+	LI c2 = crt(vector<Remainder<LI>>{{mod1, 0}, {mod2, 1}, {mod3, 0}}).rem;
+	LI c3 = crt(vector<Remainder<LI>>{{mod1, 0}, {mod2, 0}, {mod3, 1}}).rem;
+
 	NTT<mod1, N> ntt1;
 	NTT<mod2, N> ntt2;
 	NTT<mod3, N> ntt3;
