@@ -9,7 +9,7 @@ class FFTMod : public IFFT<modulo_type, complex<real_type>, N> {
 	using base = complex<real_type>;
 public:
 	// Be careful, it's usually better to use 2 or 3 modulos NTT and then CRT (if vectors are ~5e5)
-	vector<modulo_type> multiply(const vector<modulo_type>& a, const vector<modulo_type>& b) {
+	vector<modulo_type> multiply(vector<modulo_type> a, vector<modulo_type> b) {
 		static constexpr int block = 66666;
 		if (!this->initialized_) {
 			this->initialize();
