@@ -10,6 +10,40 @@ public:
 	~IFFT() {}
 
 	virtual vector<outer_type> multiply(vector<outer_type> a, vector<outer_type> b) {
+		if ((int)a.size() > N / 2 || (int)b.size() > N / 2) {
+			vector<outer_type> result(a.size() + b.size() - 1);
+			const int low_len = (max(a.size(), b.size()) + 1) / 2;
+			vector<outer_type> a_low(a.begin(), min(a.begin() + low_len, a.end()));
+			vector<outer_type> a_high(min(a.begin() + low_len, a.end()), a.end());
+			vector<outer_type> b_low(b.begin(), min(b.begin() + low_len, b.end()));
+			vector<outer_type> b_high(min(b.begin() + low_len, b.end()), b.end());
+
+			auto tmp = multiply(a_low, b_low);
+			for (int i = 0; i < (int)tmp.size(); ++i) {
+				result[i] += tmp[i];
+				if (low_len + i < (int)result.size()) {
+					result[low_len + i] -= tmp[i];
+				}
+			}
+			tmp = multiply(a_high, b_high);
+			for (int i = 0; i < (int)tmp.size(); ++i) {
+				result[2 * low_len + i] += tmp[i];
+				if (low_len + i < (int)result.size()) {
+					result[low_len + i] -= tmp[i];
+				}
+			}
+			for (int i = 0; i < (int)a_high.size(); ++i) {
+				a_low[i] += a_high[i];
+			}
+			for (int i = 0; i < (int)b_high.size(); ++i) {
+				b_low[i] += b_high[i];
+			}
+			tmp = multiply(a_low, b_low);
+			for (int i = 0; i < (int)tmp.size(); ++i) {
+				result[low_len + i] += tmp[i];
+			}
+			return result;
+		}
 		if (!initialized_) {
 			initialize();
 		}
@@ -46,6 +80,9 @@ public:
 		vector<outer_type> b = {1 / a[0]};
 		for (int len = 1; len < prec; len *= 2) {
 			auto tmp = multiply(b, b);
+			if ((int)tmp.size() > prec) {
+				tmp.resize(prec);
+			}
 			tmp = multiply(tmp, vector<outer_type>{a.begin(), a.begin() + min(2 * len, (int)a.size())});
 			tmp.resize(2 * len);
 			for (int i = 0; i < len; ++i) {
