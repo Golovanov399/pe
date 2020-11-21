@@ -48,6 +48,10 @@ struct my_complex {
 		return *this;
 	}
 
+	bool operator ==(const my_complex<real_type>& ot) const {
+		return tie(x, y) == tie(ot.x, ot.y);
+	}
+
 	my_complex conj() const {
 		return {x, -y};
 	}
