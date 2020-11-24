@@ -1,8 +1,6 @@
 #pragma once
 
-using namespace std;
-
-#include "../base.h"
+#include "../base/base.h"
 #include "modular.h"
 
 bool is_prime(int n) {
@@ -28,7 +26,7 @@ bool is_square_residue(int a, int p) {
 	if (integral_variable<int>::value != p) {
 		set_prime(p);
 	}
-	return pw(TypeModular<integral_variable<int>>(a), (p - 1) / 2) == 1;
+	return TypeModular<integral_variable<int>>(a).pow((p - 1) / 2) == 1;
 }
 
 int sqrt_mod(int a, int p) {
@@ -43,12 +41,12 @@ int sqrt_mod(int a, int p) {
 	}
 	using Mint = TypeModular<integral_variable<int>>;
 	if (p % 4 == 3) {
-		return (int)pw(Mint(a), (p + 1) / 4);
+		return (int)Mint(a).pow((p + 1) / 4);
 	}
 
 	// tonelli-shanks starts here
 	Mint z = 1;
-	while (pw(z, (p - 1) / 2) == 1) {
+	while (z.pow((p - 1) / 2) == 1) {
 		++z;
 	}
 	int q = p - 1;

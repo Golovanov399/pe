@@ -1,8 +1,7 @@
 #pragma once
 
-using namespace std;
-
-#include "../base.h"
+#include "../base/base.h"
+#include "../base/istream.h"
 
 template <typename T>
 struct TypeModular {

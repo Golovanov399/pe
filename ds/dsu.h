@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
 
 struct Dsu {
 	int n;

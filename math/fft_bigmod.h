@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
 #include "fft_interface.h"
 #include "complex.h"
+#include "modular.h"
 
 template <typename modulo_type, typename real_type, int N>
 class FFTMod : public IFFT<modulo_type, complex<real_type>, N> {
@@ -94,5 +95,5 @@ protected:
 	}
 };
 
-template <int mod, typename real_type, int N = (1 << 20)>
-using FFT = FFTMod<Modular<mod>, real_type, N>;
+// template <int mod, typename real_type, int N = (1 << 20)>
+// using FFT = FFTMod<Modular<mod>, real_type, N>;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
 #include "modular.h"
 
 template <int mod, int N = (1 << __builtin_ctz(mod - 1))>

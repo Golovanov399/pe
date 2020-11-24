@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.h"
+#include "../base/traits.h"
 
 template <typename K>
 struct basic_hasher {

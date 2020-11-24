@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
+#include "../base/traits.h"
 #include "fft_interface.h"
 #include "complex.h"
 
 template <typename real_type, int N>
-class FFT : public IFFT<long long, complex<real_type>, N> {
+class FFTLL : public IFFT<long long, complex<real_type>, N> {
 	using base = complex<real_type>;
 public:
 	// Be careful, it's usually better to use 2 or 3 modulos NTT and then CRT (if vectors are ~5e5)

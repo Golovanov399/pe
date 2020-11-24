@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
 
 template <typename V = int>
 struct Fenwick {

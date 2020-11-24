@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
+#include "../base/traits.h"
 #include "fft_interface.h"
 #include "ntt.h"
 #include "modular.h"
@@ -54,6 +55,3 @@ protected:
 
 	void fill_angles() {}
 };
-
-// template <int mod, typename real_type, int N = (1 << 20)>
-// using FFT = FFTMod<Modular<mod>, real_type, N>;

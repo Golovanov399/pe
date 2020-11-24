@@ -1,6 +1,17 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
+
+template <typename T>
+bool is_zero(const T& x) {
+	if (is_integral_v<T>) {
+		return x == 0;
+	} else if (is_floating_point_v<T>) {
+		return abs(x) < 1e-8;
+	} else {
+		assert(false);
+	}
+}
 
 template <typename real_type>
 struct my_complex {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base.h"
+#include "../base/base.h"
 
 template <typename outer_type, typename inner_type, int N>
 class IFFT {
