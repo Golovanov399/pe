@@ -47,3 +47,52 @@ vector<T> find_linear_recurrence(const vector<T>& a) {
 	}
 	return p;
 }
+
+template <typename T>
+T get_nth_term_of_recurrence(const vector<T>& rec, const vector<T>& initial, long long n) {
+	if (n < (int)initial.size()) {
+		return initial[n];
+	}
+	const int sz = (int)rec.size();
+	auto mult = [&](const vector<T>& a, const vector<T>& b) {
+		vector<T> res(sz * 2);
+		for (int i = 0; i < sz; ++i) {
+			for (int j = 0; j < sz; ++j) {
+				res[i + j] += a[i] * b[j];
+			}
+		}
+		for (int i = 2 * sz - 1; i >= sz; --i) {
+			if (!res[i]) {
+				continue;
+			}
+			for (int j = 0; j < sz; ++j) {
+				res[i - 1 - j] += res[i] * rec[j];
+			}
+		}
+		res.resize(sz);
+		return res;
+	};
+
+	vector<T> res(sz);
+	res[0] = 1;
+	vector<T> a(sz);
+	a[1] = 1;
+	while (n) {
+		if (n & 1ll) {
+			res = mult(res, a);
+		}
+		n >>= 1;
+		a = mult(a, a);
+	}
+	T answer = 0;
+	for (int i = 0; i < sz; ++i) {
+		answer += res[i] * initial[i];
+	}
+	return answer;
+}
+
+template <typename T>
+T guess_nth_term(const vector<T>& a, long long n) {
+	auto rec = find_linear_recurrence(a);
+	return get_nth_term_of_recurrence(rec, a, n);
+}
