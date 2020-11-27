@@ -12,5 +12,6 @@
 #include "ntt.h"
 
 #include "prime.h"
+#include "berlekamp.h"
 
 // #include "working_ntt.h"
