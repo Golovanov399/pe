@@ -20,22 +20,30 @@ vector<T> find_linear_recurrence(const vector<T>& a) {
 			continue;
 		}
 		auto new_p = p;
+		bool need_to_upd = true;
 		if (new_p.empty()) {
 			new_p.assign(i + 1, 0);
 		} else {
 			const int sz = (i - last_idx - 1) + (int)last_incorrect.size();
-			new_p.resize(max((int)new_p.size(), sz));
+			if (sz > (int)new_p.size()) {
+				new_p.resize(sz);
+			} else {
+				need_to_upd = false;
+			}
 			for (int j = 0; j < (int)last_incorrect.size(); ++j) {
 				new_p[i - last_idx - 1 + j] += last_incorrect[j] * (a[i] - cur);
 			}
 		}
-		last_incorrect = p;
-		last_incorrect.insert(last_incorrect.begin(), -1);
-		for (auto& x : last_incorrect) {
-			x /= cur - a[i];
+		if (need_to_upd) {
+			last_incorrect = p;
+			last_incorrect.insert(last_incorrect.begin(), -1);
+			auto inv = 1 / (cur - a[i]);
+			for (auto& x : last_incorrect) {
+				x *= inv;
+			}
+			last_idx = i;
 		}
 		p.swap(new_p);
-		last_idx = i;
 	}
 	return p;
 }
