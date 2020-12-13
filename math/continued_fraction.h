@@ -58,7 +58,11 @@ vector<ContinuedFraction<T>> get_convergents(const F& cmp, T max_denom) {
 
 template <typename T, typename F>
 ContinuedFraction<T> get_best_approximation(const F& cmp, T max_denom) {
-	return get_convergents(cmp, max_denom).back();
+	auto vec = get_convergents(cmp, max_denom);
+	if ((int)vec.size() == 1) {
+		return vec.back();
+	}
+	return vec.back() + vec[(int)vec.size() - 2] * ((max_denom - vec.back().x) / vec[(int)vec.size() - 2].x);
 }
 /*
 template <typename T>
