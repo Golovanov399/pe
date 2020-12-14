@@ -12,6 +12,8 @@
 #include "ntt.h"
 
 #include "prime.h"
+#include "prime_count.h"
+#include "sieve.h"
 #include "berlekamp.h"
 #include "continued_fraction.h"
 

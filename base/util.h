@@ -61,3 +61,27 @@ li pw_big(li a, li b, li mod) {
 	}
 	return res;
 }
+
+li sqr(li x) {
+	return x * x;
+}
+
+template <typename T>
+bool remin(T& x, T y) {
+	if (x > y) {
+		x = y;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+template <typename T>
+bool remax(T& x, T y) {
+	if (x < y) {
+		x = y;
+		return true;
+	} else {
+		return false;
+	}
+}
