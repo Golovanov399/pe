@@ -1,22 +1,25 @@
 #pragma once
 
 #include "sieve.h"
+#include "modular.h"
 #include "../base/util.h"
 #include "../ds/fenwick.h"
 
-class PrimeCount {
+template <typename T, typename Func>
+class PrimePrefix {
 public:
 	const li n;
 	const li K;
+	const Func func;
 
-	static constexpr li def = numeric_limits<li>::min();
+	static constexpr T def = 2281488;
 
 	vector<int> erat, primes;
 	vector<int> sorted_numbers;
-	vector<vector<li>> dp;
-	vector<li> prec;
+	vector<vector<T>> dp;
+	vector<T> prec;
 
-	explicit PrimeCount(li _n): n(_n), K(max({20., pow(n / max(1., log(n)), 2. / 3), sqrt(n) + 100})) {
+	explicit PrimePrefix(li _n, Func&& _func = Func()): n(_n), K(max({20., pow(n / max(1., log(n)), 2. / 3), sqrt(n) + 100})), func(_func) {
 		tie(erat, primes) = sieve(K);
 		dp.resize(n / (K - 1) + 1);
 		for (int i = 1, j = (int)primes.size() - 1; n / i >= K; ++i) {
@@ -47,14 +50,14 @@ public:
 		int id;
 		int n;
 		int k;
-		li ans;
+		T ans;
 	};
 
 	void fill_dp() {
 		if (dp.empty()) {
 			return;
 		}
-		Fenwick<li> f(K);
+		Fenwick<T> f(K);
 		for (int i = 1; i < K; ++i) {
 			f.add(i, 1);	// here
 		}
@@ -88,7 +91,7 @@ public:
 		}
 	}
 
-	li calc(int i) {
+	T calc(int i) {
 		if (n / i < (int)prec.size()) {
 			return prec[n / i];
 		}
@@ -98,7 +101,7 @@ public:
 			sort(all(qrs), [&](const Query& a, const Query& b) {
 				return a.k > b.k;
 			});
-			Fenwick<li> f(K);
+			Fenwick<T> f(K);
 			f.add(1, 1);	// here
 			int idx = 0;
 			for (int k : sorted_numbers) {
@@ -141,12 +144,12 @@ private:
 		}
 	}
 
-	li calc_queries(li i, int j, vector<Query>& qrs) {
+	T calc_queries(li i, int j, vector<Query>& qrs) {
 		const li curn = n / i;
 		if (j == 0) {
 			return curn;	// here
 		} else if (curn < K) {
-			li ans = qrs.back().ans;
+			T ans = qrs.back().ans;
 			qrs.pop_back();
 			return ans;
 		} else if (j >= (int)dp[i].size()) {
@@ -154,10 +157,21 @@ private:
 		} else if (dp[i][j] != def) {
 			return dp[i][j];
 		} else {
-			li ans = 0;
+			T ans = 0;
 			ans += calc_queries(i, j - 1, qrs);
 			ans -= calc_queries(i * primes[j - 1], j - 1, qrs);
 			return dp[i][j] = ans;
 		}
 	}
 };
+
+template <typename T, size_t p>
+class PowerClass {
+public:
+	T operator ()(T x) const {
+		return pw(x, p);
+	}
+};
+
+using PrimeCount = PrimePrefix<li, PowerClass<li, 0>>;
+
