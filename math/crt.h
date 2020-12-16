@@ -31,7 +31,7 @@ bool crt_once(Remainder<int_type>& r1, const Remainder<int_type>& r2) {
 	if (x < r2.mod) {
 		x += r2.mod;
 	}
-	r1 = {lcm(r1.mod, r2.mod), r1.rem + x * inv(r1.mod / g, r2.mod / g) % r2.mod * (r1.mod / g)};
+	r1 = {lcm(r1.mod, r2.mod), r1.rem + (int_type)(x * inv<LI>(r1.mod / g, r2.mod / g) % r2.mod) * (r1.mod / g)};
 	return true;
 }
 

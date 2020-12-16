@@ -76,6 +76,24 @@ vector<long long> factorize(long long n) {
 	}
 }
 
+vector<long long> get_divisors(long long n) {
+	auto fc = factorize(n);
+	sort(all(fc));
+	vector<long long> divs = {1ll};
+	int sz = divs.size();
+	int last = 0;
+	for (int p : fc) {
+		if (p != last) {
+			sz = divs.size();
+		}
+		for (int i = 0; i < sz; ++i) {
+			divs.push_back(divs[(int)divs.size() - sz] * p);
+		}
+		last = p;
+	}
+	return divs;
+}
+
 bool is_square_residue(int a, int p) {
 	assert(is_prime(p));
 	if (!a) {
