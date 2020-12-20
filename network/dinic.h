@@ -45,7 +45,7 @@ public:
 private:
 	vector<int> d;
 	vector<int> ptr;
-	static constexpr int_type inf = numeric_limits<int_type>::max();
+	static inline constexpr int_type inf = numeric_limits<int_type>::max();
 
 	int_type push_flow(int s, int t, int_type flow_limit) {
 		if (!flow_limit) {
