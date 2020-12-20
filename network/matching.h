@@ -44,6 +44,20 @@ vector<int> kuhn_matching(const vector<vector<int>>& ed) {
 	vector<int> used(n);
 	int timer = 0;
 
+	vector<int> perm(n);
+	iota(all(perm), 0);
+	random_shuffle(all(perm));
+
+	for (int i : perm) {
+		for (int x : ed[i]) {
+			if (rt[x] == -1) {
+				rt[x] = i;
+				lt[i] = x;
+				break;
+			}
+		}
+	}
+
 	function<bool(int)> dfs = [&](int v) {
 		if (used[v] == timer) {
 			return false;
@@ -69,7 +83,7 @@ vector<int> kuhn_matching(const vector<vector<int>>& ed) {
 	for (int run = 1; run;) {
 		run = 0;
 		++timer;
-		for (int i = 0; i < n; ++i) {
+		for (int i : perm) {
 			if (lt[i] == -1 && dfs(i)) {
 				run = 1;
 			}
