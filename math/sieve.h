@@ -3,16 +3,16 @@
 #include "../base/base.h"
 
 pair<vector<int>, vector<int>> sieve(int n) {
-	vector<int> erat(n);
+	vector<int> erat(n + 1);
 	vector<int> primes;
 	erat[1] = 1;
-	for (int i = 2; i < n; ++i) {
+	for (int i = 2; i <= n; ++i) {
 		if (erat[i] == 0) {
 			erat[i] = i;
 			primes.push_back(i);
 		}
 		for (int p : primes) {
-			if (p > erat[i] || i * p >= n) {
+			if (p > erat[i] || i * p > n) {
 				break;
 			}
 			erat[i * p] = p;
