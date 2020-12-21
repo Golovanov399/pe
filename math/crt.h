@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../base/base.h"
+#include "../base/traits.h"
 
 template <typename int_type>
 struct Remainder {
@@ -16,9 +17,24 @@ int_type inv(int_type a, int_type b) {
 template <typename int_type>
 pair<int_type, int_type> euc(int_type a, int_type b) {
 	// returns such {x, y} that ax + by = gcd(a, b)
+	int sign_a = 1, sign_b = 1;
+	if (a < 0) {
+		sign_a *= -1;
+		a *= -1;
+	}
+	if (b < 0) {
+		sign_b *= -1;
+		b *= -1;
+	}
+	if (!a) {
+		return {0, sign_b};
+	}
+	if (!b) {
+		return {sign_a, 0};
+	}
 	auto g = gcd(a, b);
 	auto x = inv(a / g, b / g);
-	return {x, (g - a * x) / b};
+	return {x * sign_a, (g - a * x) / b * sign_b};
 }
 
 template <typename int_type>
