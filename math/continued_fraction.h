@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../base/base.h"
+#include "../base/traits.h"
+#include "crt.h"
 
 template <typename T>
 struct ContinuedFraction {
