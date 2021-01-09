@@ -85,3 +85,18 @@ bool remax(T& x, T y) {
 		return false;
 	}
 }
+
+ld eps = 1e-8;
+void set_eps(ld new_eps) {
+	eps = new_eps;
+}
+
+template <typename T>
+enable_if_t<is_integral_v<T>, int> sign(T x) {
+	return x < 0 ? -1 : x > 0;
+}
+
+template <typename T>
+enable_if_t<is_floating_point_v<T>, int> sign(T x) {
+	return x < -eps ? -1 : x > eps;
+}
