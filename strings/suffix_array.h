@@ -5,7 +5,7 @@
 
 class SuffixArray {
 public:
-	explicit SuffixArray(const string& _s, bool need_sparse = true): s(_s + '#'), n((int)_s.length() + 1) {
+	explicit SuffixArray(const string& _s, bool need_sparse = true): s(_s + (char)1), n((int)_s.length() + 1) {
 		vector<int> cur(n);
 		for (int i = 0; i < n; ++i) {
 			cur[i] = s[i];
@@ -76,8 +76,17 @@ public:
 			}
 			lengths[pos[i]] = cur;
 		}
+		lengths.erase(lengths.begin());
 		common_lengths = decltype(common_lengths){lengths};
 		return common_lengths;
+	}
+
+	Sparse<int, Min<int>> get_sparse() {
+		if (common_lengths.table.empty()) {
+			return build_sparse();
+		} else {
+			return common_lengths;
+		}
 	}
 
 	vector<int> get_suffix_order() const {
