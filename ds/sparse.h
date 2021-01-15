@@ -1,14 +1,13 @@
 #pragma once
 
-#include "../base/base.h"
+#include "../base/functors.h"
 
-
-template <typename T, class Op = function<T(T, T)>>
+template <typename T, class Op = Min<T>>
 struct Sparse {
 	Op op;
 	vector<vector<T>> table;
 
-	template <typename U>
+	template <typename U = T>
 	void build(const vector<U>& a) {
 		table.assign(a.size(), {});
 		for (int i = 0; i < (int)a.size(); ++i) {
@@ -21,12 +20,14 @@ struct Sparse {
 		}
 	}
 
-	template <typename U>
+	Sparse() {}
+
+	template <typename U = T>
 	explicit Sparse(const vector<U>& a) {
 		build(a);
 	}
 
-	template <typename U>
+	template <typename U = T>
 	Sparse(const vector<U>& a, Op&& _op): op(_op) {
 		build(a);
 	}
@@ -39,12 +40,12 @@ struct Sparse {
 };
 
 
-template <typename T, class Op = function<T(T, T)>>
+template <typename T, class Op = Min<T>>
 struct NonIdempotentSparse {
 	Op op;
 	vector<vector<T>> left, right;
 
-	template <typename U>
+	template <typename U = T>
 	void build(const vector<U>& a) {
 		left.assign(a.size(), {});
 		right.assign(a.size(), {});
@@ -70,12 +71,14 @@ struct NonIdempotentSparse {
 		}
 	}
 
-	template <typename U>
+	NonIdempotentSparse() {}
+
+	template <typename U = T>
 	explicit NonIdempotentSparse(const vector<U>& a) {
 		build(a);
 	}
 
-	template <typename U>
+	template <typename U = T>
 	NonIdempotentSparse(const vector<U>& a, Op&& _op): op(_op) {
 		build(a);
 	}
