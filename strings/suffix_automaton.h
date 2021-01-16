@@ -9,15 +9,20 @@ public:
 		array<int, alphabet_size> to;
 		int link;
 		int len;
-		int leftmost;
 		bool term;
+
+		explicit Node(const array<int, alphabet_size>& _to = {}, int _link = -1, int _len = 0, bool _term = false):
+				to(_to),
+				link(_link),
+				len(_len),
+				term(_term) {}
 	};
 	
-	SuffixAutomaton(): nodes({{{}, -1, 0, 0, false}}), last(0) {
+	SuffixAutomaton(): nodes({Node()}), last(0) {
 		nodes[0].to.fill(-1);
 	}
 
-	explicit SuffixAutomaton(const string& s): nodes({{{}, -1, 0, 0, false}}), last(0) {
+	explicit SuffixAutomaton(const string& s): nodes({Node()}), last(0) {
 		nodes[0].to.fill(-1);
 		build(s);
 	}
@@ -29,7 +34,7 @@ public:
 		mark_terminal();
 	}
 
-	explicit SuffixAutomaton(const vector<int>& vec): nodes({{{}, -1, 0, 0, false}}), last(0) {
+	explicit SuffixAutomaton(const vector<int>& vec): nodes({Node()}), last(0) {
 		nodes[0].to.fill(-1);
 		build(vec);
 	}
@@ -39,11 +44,12 @@ public:
 			add(x);
 		}
 		mark_terminal();
+		vector<int> perm(nodes.size());
 	}
 
 	void add(int c) {
 		int v = last;
-		int nn = new_node(array<int, alphabet_size>{}, -1, nodes[last].len + 1, nodes[last].len + 1, false);
+		int nn = new_node(array<int, alphabet_size>{}, -1, nodes[last].len + 1, false);
 		last = nn;
 		while (v > -1 && nodes[v].to[c] == -1) {
 			nodes[v].to[c] = nn;
@@ -67,12 +73,8 @@ public:
 		}
 	}
 
-	int get_link(int v) const {
-		return nodes[v].link;
-	}
-
-	int get_next(int v, int c) const {
-		return nodes[v].to[c];
+	const Node& operator [](int v) const {
+		return nodes[v];
 	}
 
 	int maxlen(int v) const {
@@ -81,10 +83,6 @@ public:
 
 	int minlen(int v) const {
 		return v ? nodes[nodes[v].link].len + 1 : 0;
-	}
-
-	int get_leftmost(int v) const {
-		return nodes[v].leftmost;
 	}
 
 	int size() const {
@@ -169,7 +167,7 @@ private:
 	template <typename... Args>
 	int new_node(Args... args) {
 		int res = nodes.size();
-		nodes.push_back({args...});
+		nodes.push_back(Node{args...});
 		nodes.back().to.fill(-1);
 		return res;
 	}
