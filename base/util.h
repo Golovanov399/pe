@@ -2,6 +2,10 @@
 
 #include "traits.h"
 
+#define _repeat_cat(a, b) a##b
+#define _repeat_helper(ctr, n) for (int _repeat_cat(_mx_, ctr) = n, _repeat_cat(_i_, ctr) = 0; _repeat_cat(_i_, ctr) < _repeat_cat(_mx_, ctr); ++_repeat_cat(_i_, ctr))
+#define repeat(n) _repeat_helper(__COUNTER__, n)
+
 LI gcd(LI x, LI y) {
 	while (y) {
 		x %= y;
