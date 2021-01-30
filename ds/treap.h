@@ -110,6 +110,12 @@ struct Treap {
 		root = merge(l, merge(new Node(key), r));
 	}
 
+	void insert_by_key(const T& key) {
+		Node *l, *r;
+		split_by_key(root, l, r, key);
+		root = merge(l, merge(new Node(key), r));
+	}
+
 	void append(Node* node) {
 		root = merge(root, node);
 	}
@@ -118,6 +124,29 @@ struct Treap {
 		Node *l, *r;
 		split_by_size(root, l, r, pos);
 		root = merge(l, merge(node, r));
+	}
+
+	void insert_by_key(Node* node) {
+		Node *l, *r;
+		split_by_key(root, l, r, node->key);
+		root = merge(l, merge(node, r));
+	}
+
+	void erase_by_pos(int pos) {
+		Node *l, *r;
+		split_by_size(root, l, r, pos);
+		split_by_size(r, root, r, 1);
+		root = merge(l, r);
+	}
+
+	void erase_by_key(const T& key) {
+		if (!find(key)) {
+			return;
+		}
+		Node *l, *r;
+		split_by_key(root, l, r, key);
+		split_by_size(l, l, root, get_size(l) - 1);
+		root = merge(l, r);
 	}
 
 	Node* find(const T& key) {
