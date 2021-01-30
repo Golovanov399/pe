@@ -104,49 +104,112 @@ struct Treap {
 		add(key);
 	}
 
-	void insert(int pos, const T& key) {
-		Node *l, *r;
-		split_by_size(root, l, r, pos);
-		root = merge(l, merge(new Node(key), r));
-	}
-
-	void insert_by_key(const T& key) {
-		Node *l, *r;
-		split_by_key(root, l, r, key);
-		root = merge(l, merge(new Node(key), r));
-	}
-
 	void append(Node* node) {
 		root = merge(root, node);
 	}
 
+	void insert(int pos, const T& key) {
+		insert(pos, new Node(key));
+	}
+
 	void insert(int pos, Node* node) {
-		Node *l, *r;
-		split_by_size(root, l, r, pos);
-		root = merge(l, merge(node, r));
+		insert(root, pos, node);
+	}
+
+	void insert(Node*& node, int pos, Node* to_ins) {
+		if (!node) {
+			node = to_ins;
+			return;
+		}
+		if (node->prior < to_ins->prior) {
+			if (get_size(node->left) >= pos) {
+				insert(node->left, pos, to_ins);
+			} else {
+				insert(node->right, pos - get_size(node->left) - 1, to_ins);
+			}
+			recalc(node);
+		} else {
+			Node *left, *right;
+			split_by_pos(node, left, right, pos);
+			node = to_ins;
+			node->left = left;
+			node->right = right;
+			recalc(node);
+		}
+	}
+
+	void insert_by_key(const T& key) {
+		insert_by_key(new Node(key));
 	}
 
 	void insert_by_key(Node* node) {
-		Node *l, *r;
-		split_by_key(root, l, r, node->key);
-		root = merge(l, merge(node, r));
+		insert_by_key(root, node);
+	}
+
+	void insert_by_key(Node*& node, Node* to_ins) {
+		if (!node) {
+			node = to_ins;
+			return;
+		}
+		if (node->prior < to_ins->prior) {
+			if (node->key > to_ins->key) {
+				insert_by_key(node->left, to_ins);
+			} else {
+				insert_by_key(node->right, to_ins);
+			}
+			recalc(node);
+		} else {
+			Node *left, *right;
+			split_by_key(node, left, right, to_ins->key);
+			node = to_ins;
+			node->left = left;
+			node->right = right;
+			recalc(node);
+		}
 	}
 
 	void erase_by_pos(int pos) {
-		Node *l, *r;
-		split_by_size(root, l, r, pos);
-		split_by_size(r, root, r, 1);
-		root = merge(l, r);
+		erase_by_pos(root, pos);
+	}
+
+	void erase_by_pos(Node*& node, int pos) {
+		if (!node) {
+			return;
+		}
+		if (get_size(node->left) == pos) {
+			auto left = node->left, right = node->right;
+			node->left = node->right = nullptr;
+			recalc(node);
+			node = merge(left, right);
+		} else if (get_size(node->left) < pos) {
+			erase_by_pos(node->right, pos - get_size(node->left) - 1);
+			recalc(node);
+		} else {
+			erase_by_pos(node->left, pos);
+			recalc(node);
+		}
 	}
 
 	void erase_by_key(const T& key) {
-		if (!find(key)) {
+		erase_by_key(root, key);
+	}
+
+	void erase_by_key(Node*& node, const T& key) {
+		if (!node) {
 			return;
 		}
-		Node *l, *r;
-		split_by_key(root, l, r, key);
-		split_by_size(l, l, root, get_size(l) - 1);
-		root = merge(l, r);
+		if (node->key == key) {
+			auto left = node->left, right = node->right;
+			node->left = node->right = nullptr;
+			recalc(node);
+			node = merge(left, right);
+		} else if (node->key < key) {
+			erase_by_key(node->right, key);
+			recalc(node);
+		} else {
+			erase_by_key(node->left, key);
+			recalc(node);
+		}
 	}
 
 	Node* find(const T& key) {
