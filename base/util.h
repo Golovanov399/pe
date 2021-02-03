@@ -104,3 +104,19 @@ template <typename T>
 enable_if_t<is_floating_point_v<T>, int> sign(T x) {
 	return x < -eps ? -1 : x > eps;
 }
+
+int isqrt(long long n) {
+	int x = sqrtl(n);
+	while (sqr(x + 1) <= n) {
+		++x;
+	}
+	return x;
+}
+
+int icbrt(long long n) {
+	int x = pow(n, 1./3);
+	while (sqr(x + 1) * (x + 1) <= n) {
+		++x;
+	}
+	return x;
+}
