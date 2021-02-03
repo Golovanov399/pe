@@ -16,11 +16,11 @@ public:
 
 	Dinic(int _n): n(_n), eids(_n) {}
 
-	void add_edge(int u, int v, int_type c) {
+	void add_edge(int u, int v, int_type c, bool bidirectional = true) {
 		eids[u].push_back(edges.size());
 		edges.push_back({u, v, c, 0});
 		eids[v].push_back(edges.size());
-		edges.push_back({v, u, 0, 0});
+		edges.push_back({v, u, bidirectional ? c : 0, 0});
 	}
 
 	int_type k_flow(int s, int t, int_type flow_limit) {
