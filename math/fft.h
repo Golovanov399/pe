@@ -50,7 +50,7 @@ protected:
 		this->angles.assign(N, 1);
 		for (int i = 1; i < N; ++i) {
 			this->angles[i] = this->angles[i - 1] * root;
-			if (!(i & 31)) {
+			if (!(i & 8)) {
 				this->angles[i] = {cos(2 * pi / N * i), sin(2 * pi / N * i)};
 			}
 		}
