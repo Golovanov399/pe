@@ -44,7 +44,7 @@ ull squfof_iter(ull n, ull k, uint its) {
 	if (gcd(k, n) != 1) {
 		return gcd(k, n);
 	}
-	vector<int> saved;
+	vector<uint> saved;
 	ull nk = n * k;
 	if (nk >> 62) {
 		return 1;
@@ -123,7 +123,7 @@ ull squfof_iter(ull n, ull k, uint its) {
 	q1 = (nk - sqr(p1)) / q0;
 
 	for (j = 0; j < its; ++j) {
-		int q = 1, tmp = sqrtn + p1 - q1;
+		uint q = 1, tmp = sqrtn + p1 - q1;
 		if (tmp >= q1) {
 			q += tmp / q1;
 		}
@@ -163,7 +163,7 @@ ull squfof(ull n) {
 		for (int p1 : {1, 3, 5, 3 * 5}) {
 			for (int p2 : {1, 7, 11, 7 * 11}) {
 				const int k = p1 * p2;
-				if (LLONG_MAX / k <= n) {
+				if (ULLONG_MAX / k <= n) {
 					continue;
 				}
 				ull d = squfof_iter(n, k, its * 300);

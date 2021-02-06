@@ -2,6 +2,7 @@
 
 #include "../base/base.h"
 #include "../base/traits.h"
+#include "../base/util.h"
 
 template <typename int_type>
 struct Remainder {
