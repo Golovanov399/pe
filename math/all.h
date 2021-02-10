@@ -16,5 +16,6 @@
 #include "sieve.h"
 #include "berlekamp.h"
 #include "continued_fraction.h"
+#include "util.h"
 
 // #include "working_ntt.h"
