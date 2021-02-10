@@ -11,6 +11,7 @@
 #include "fft_ll.h"
 #include "ntt.h"
 
+#include "nimbers.h"
 #include "prime.h"
 #include "prime_count.h"
 #include "sieve.h"
