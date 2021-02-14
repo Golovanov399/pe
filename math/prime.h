@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../base/traits.h"
 #include "../base/util.h"
 #include "modular.h"
 
