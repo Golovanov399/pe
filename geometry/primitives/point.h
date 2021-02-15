@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../base/base.h"
+#include "../../base/util.h"
 
 template <typename T>
 struct Point {
@@ -99,12 +100,12 @@ struct Point {
 
 	friend T dist(const Point& p, const Point& q) {
 		static_assert(!is_integral_v<T>);
-		return len(p - q);
+		return (p - q).len();
 	}
 
 	T dist(const Point& q) const {
 		static_assert(!is_integral_v<T>);
-		return len(*this - q);
+		return (*this - q).len();
 	}
 
 	template <typename U>
