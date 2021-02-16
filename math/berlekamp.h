@@ -73,6 +73,19 @@ T get_nth_term_of_recurrence(const vector<T>& rec, const vector<T>& initial, lon
 		return res;
 	};
 
+	if (sz == 1) {
+		T answer = initial[0];
+		T cur = rec[0];
+		while (n) {
+			if (n & 1ll) {
+				answer *= cur;
+			}
+			n >>= 1;
+			cur *= cur;
+		}
+		return answer;
+	}
+
 	vector<T> res(sz);
 	res[0] = 1;
 	vector<T> a(sz);
