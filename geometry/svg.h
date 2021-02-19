@@ -63,8 +63,8 @@ public:
 	}
 
 	template <typename T>
-	void draw(const Segment<T>& s, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
-		line(s.p.x, s.p.y, s.q.x, s.q.y, fill, outline, width, alpha);
+	void draw(const Segment<T>& s, string outline = "black", ld width = 1, ld alpha = 1.) {
+		line(s.p.x, s.p.y, s.q.x, s.q.y, outline, width, alpha);
 	}
 
 	template <typename T>
