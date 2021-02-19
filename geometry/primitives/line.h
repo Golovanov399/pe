@@ -37,3 +37,8 @@ struct Line {
 		return {p.template cast_to<U>(), v.template cast_to<U>()};
 	}
 };
+
+template <typename T>
+Line<T> line_through(const Point<T>& p, const Point<T>& q) {
+	return {p, q - p};
+}
