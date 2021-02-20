@@ -108,6 +108,10 @@ struct Point {
 		return (*this - q).len();
 	}
 
+	Point<T> rot90() const {
+		return {-y, x};
+	}
+
 	template <typename U>
 	Point<U> cast_to() const {
 		return {static_cast<U>(x), static_cast<U>(y)};

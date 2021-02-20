@@ -42,3 +42,9 @@ template <typename T>
 Line<T> line_through(const Point<T>& p, const Point<T>& q) {
 	return {p, q - p};
 }
+
+template <typename T>
+Line<T> segment_bisector(const Point<T>& p, const Point<T>& q) {
+	static_assert(!is_integral_v<T>);
+	return {(p + q) / 2, (q - p).rot90()};
+}
