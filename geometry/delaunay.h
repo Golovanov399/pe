@@ -3,7 +3,8 @@
 #include "primitives/all.h"
 
 template <typename T>
-struct Delaunay {
+class Delaunay {
+public:
 	struct Edge {
 		Delaunay* par;
 		int u, v;	// point ids
@@ -104,84 +105,6 @@ struct Delaunay {
 		}
 	};
 
-	void add_edge(int u, int v, int t1, int i1, int t2, int i2) {
-		edges.push_back({this, u, v});
-		if (t1 > -1) {
-			edges.back().change(-1, t1, i1);
-		}
-		if (t2 > -1) {
-			edges.back().change(-1, t2, i2);
-		}
-	}
-
-	void add_triangle(int e1, int e2, int e3) {
-		triangles.push_back({this, e1, e2, e3});
-	}
-
-	bool is_bad(int u, int v, int p0, int p1) {
-		return (ld)abs(cross(pts[u] - pts[p0], pts[v] - pts[p0])) * dot(pts[u] - pts[p1], pts[v] - pts[p1]) +
-			   (ld)abs(cross(pts[u] - pts[p1], pts[v] - pts[p1])) * dot(pts[u] - pts[p0], pts[v] - pts[p0]) < 0;
-	}
-
-	void try_flip(vector<int>& to_flip, int tid, int i) {
-		int op = -1;
-		for (int j = 0; j < 3; ++j) {
-			if (i != edges[triangles[tid].eid[j]].u && i != edges[triangles[tid].eid[j]].v) {
-				op = triangles[tid].eid[j];
-				break;
-			}
-		}
-
-		int t0 = edges[op].tid[0];
-		int t1 = edges[op].tid[1];
-		if (t0 == -1 || t1 == -1) {
-			return;
-		}
-		int u = edges[op].u;
-		int v = edges[op].v;
-		int p0 = triangles[t0].get_opposite(triangles[t0].find(u, v));
-		int p1 = triangles[t1].get_opposite(triangles[t1].find(u, v));
-
-		if (p0 < 0 || p1 < 0) {
-			return;
-		}
-		bool need_to_flip = false;
-		if (u >= 0 && v >= 0) {
-			need_to_flip = is_bad(u, v, p0, p1);
-		} else if (u < 0) {
-			need_to_flip = sign(cross(pts[v] - pts[p0], pts[p1] - pts[v])) * edges[op].side(p0) == -1;
-		} else if (v < 0) {
-			need_to_flip = sign(cross(pts[u] - pts[p0], pts[p1] - pts[u])) * edges[op].side(p0) == 1;
-		} else {
-			assert(false);
-		}
-		if (need_to_flip) {
-			int u0 = triangles[t0].eid[triangles[t0].find(u, p0)];
-			int v0 = triangles[t0].eid[triangles[t0].find(v, p0)];
-			int u1 = triangles[t1].eid[triangles[t1].find(u, p1)];
-			int v1 = triangles[t1].eid[triangles[t1].find(v, p1)];
-
-			int cur_t = triangles.size();
-			int cur_e = edges.size();
-
-			add_edge(p0, p1, cur_t, 0, cur_t + 1, 0);
-			edges[u0].change(t0, cur_t, 1);
-			edges[v0].change(t0, cur_t + 1, 1);
-			edges[u1].change(t1, cur_t, 2);
-			edges[v1].change(t1, cur_t + 1, 2);
-			add_triangle(cur_e, u0, u1);
-			add_triangle(cur_e, v0, v1);
-
-			assert(triangles[t0].sons.empty());
-			assert(triangles[t1].sons.empty());
-			triangles[t0].sons = {cur_t, cur_t + 1};
-			triangles[t1].sons = {cur_t, cur_t + 1};
-
-			to_flip.push_back(cur_t);
-			to_flip.push_back(cur_t + 1);
-		}
-	}
-
 	Delaunay(const vector<Point<T>>& _pts): pts(_pts) {
 		int n = pts.size();
 		vector<int> perm(n);
@@ -280,6 +203,119 @@ struct Delaunay {
 		}
 	}
 
+	vector<pair<int, int>> get_edges() const {
+		vector<char> used(edges.size());
+		for (const auto& tr : triangles) {
+			if (!tr.sons.empty()) {
+				continue;
+			}
+			for (int i = 0; i < 3; ++i) {
+				used[tr.eid[i]] = 1;
+			}
+		}
+		vector<pair<int, int>> res;
+		for (int i = 0; i < (int)edges.size(); ++i) {
+			if (!used[i] || edges[i].u < 0 || edges[i].v < 0) {
+				continue;
+			}
+			res.push_back({edges[i].u, edges[i].v});
+		}
+		return res;
+	}
+
+	vector<array<int, 3>> get_triangles() const {
+		vector<array<int, 3>> res;
+		for (const auto& tr : triangles) {
+			if (!tr.sons.empty()) {
+				continue;
+			}
+			if (auto pids = tr.get_pids(); *min_element(all(pids)) >= 0) {
+				res.push_back(pids);
+			}
+		}
+		return res;
+	}
+
+protected:
+	void add_edge(int u, int v, int t1, int i1, int t2, int i2) {
+		edges.push_back({this, u, v});
+		if (t1 > -1) {
+			edges.back().change(-1, t1, i1);
+		}
+		if (t2 > -1) {
+			edges.back().change(-1, t2, i2);
+		}
+	}
+
+	void add_triangle(int e1, int e2, int e3) {
+		triangles.push_back({this, e1, e2, e3});
+	}
+
+	bool is_bad(int u, int v, int p0, int p1) {
+		return (ld)abs(cross(pts[u] - pts[p0], pts[v] - pts[p0])) * dot(pts[u] - pts[p1], pts[v] - pts[p1]) +
+			   (ld)abs(cross(pts[u] - pts[p1], pts[v] - pts[p1])) * dot(pts[u] - pts[p0], pts[v] - pts[p0]) < 0;
+	}
+
+	void try_flip(vector<int>& to_flip, int tid, int i) {
+		int op = -1;
+		for (int j = 0; j < 3; ++j) {
+			if (i != edges[triangles[tid].eid[j]].u && i != edges[triangles[tid].eid[j]].v) {
+				op = triangles[tid].eid[j];
+				break;
+			}
+		}
+
+		int t0 = edges[op].tid[0];
+		int t1 = edges[op].tid[1];
+		if (t0 == -1 || t1 == -1) {
+			return;
+		}
+		int u = edges[op].u;
+		int v = edges[op].v;
+		int p0 = triangles[t0].get_opposite(triangles[t0].find(u, v));
+		int p1 = triangles[t1].get_opposite(triangles[t1].find(u, v));
+
+		if (p0 < 0 || p1 < 0) {
+			return;
+		}
+		bool need_to_flip = false;
+		if (u >= 0 && v >= 0) {
+			need_to_flip = is_bad(u, v, p0, p1);
+		} else if (u < 0) {
+			need_to_flip = sign(cross(pts[v] - pts[p0], pts[p1] - pts[v])) * edges[op].side(p0) == -1;
+		} else if (v < 0) {
+			need_to_flip = sign(cross(pts[u] - pts[p0], pts[p1] - pts[u])) * edges[op].side(p0) == 1;
+		} else {
+			assert(false);
+		}
+		if (need_to_flip) {
+			int u0 = triangles[t0].eid[triangles[t0].find(u, p0)];
+			int v0 = triangles[t0].eid[triangles[t0].find(v, p0)];
+			int u1 = triangles[t1].eid[triangles[t1].find(u, p1)];
+			int v1 = triangles[t1].eid[triangles[t1].find(v, p1)];
+
+			int cur_t = triangles.size();
+			int cur_e = edges.size();
+
+			add_edge(p0, p1, cur_t, 0, cur_t + 1, 0);
+			edges[u0].change(t0, cur_t, 1);
+			edges[v0].change(t0, cur_t + 1, 1);
+			edges[u1].change(t1, cur_t, 2);
+			edges[v1].change(t1, cur_t + 1, 2);
+			add_triangle(cur_e, u0, u1);
+			add_triangle(cur_e, v0, v1);
+
+			assert(triangles[t0].sons.empty());
+			assert(triangles[t1].sons.empty());
+			triangles[t0].sons = {cur_t, cur_t + 1};
+			triangles[t1].sons = {cur_t, cur_t + 1};
+
+			to_flip.push_back(cur_t);
+			to_flip.push_back(cur_t + 1);
+		}
+	}
+
+protected:
 	vector<Point<T>> pts;
 	vector<Edge> edges;
 	vector<Triangle> triangles;
