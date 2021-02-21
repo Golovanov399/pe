@@ -112,6 +112,24 @@ struct Point {
 		return {-y, x};
 	}
 
+	Point<T> rotated(ld phi) const {
+		static_assert(!is_integral_v<T>);
+		ld cs = cos(phi), sn = sin(phi);
+		return {x * cs - y * sn, x * sn + y * cs};
+	}
+
+	void rotate(ld phi) {
+		*this = rotated(phi);
+	}
+
+	Point<T> rotated_via_trig(ld cs, ld sn) const {
+		return {x * cs - y * sn, x * sn + y * cs};
+	}
+
+	void rotate_via_trig(ld cs, ld sn) {
+		*this = rotated_via_trig(cs, sn);
+	}
+
 	template <typename U>
 	Point<U> cast_to() const {
 		return {static_cast<U>(x), static_cast<U>(y)};
