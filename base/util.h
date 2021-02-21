@@ -66,6 +66,11 @@ li pw_big(li a, li b, li mod) {
 	return res;
 }
 
+template <typename T>
+T sqr(T x) {
+	return x * x;
+}
+
 li sqr(li x) {
 	return x * x;
 }

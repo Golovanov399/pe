@@ -12,6 +12,14 @@ struct Circle {
 		return sign(dst - sqr(r - ot.r)) >= 0 && sign(dst - sqr(r + ot.r)) <= 0;
 	}
 
+	bool strictly_intersects(const Circle& ot) const {
+		auto dst = (p - ot.p).sqr();
+		if (sign(dst) == 0 && sign(r - ot.r) == 0) {
+			return true;
+		}
+		return sign(dst - sqr(r - ot.r)) > 0 && sign(dst - sqr(r + ot.r)) < 0;
+	}
+
 	vector<Point<T>> intersect(const Circle& ot) const {
 		static_assert(!is_integral_v<T>);
 		if (!intersects(ot)) {
@@ -24,13 +32,13 @@ struct Circle {
 		T d = dist(p, ot.p);
 		T cos_phi = (sqr(d) + sqr(ot.r) - sqr(r)) / 2 / d / ot.r;
 		if (sign(abs(cos_phi) - 1) == 0) {
-			return {p + (ot.p - p) * (r / (r + ot.r))};
+			return {p + (ot.p - p) * (r / d)};
 		}
 		T sin_phi = sqrt(1 - sqr(cos_phi));
 		auto vec = p - ot.p;
-		vec *= (ot.r / (r + ot.r));
-		return {ot.p + vec.rotated_using_trig(cos_phi, sin_phi),
-				ot.p + vec.rotated_using_trig(cos_phi, -sin_phi)};
+		vec *= (ot.r / d);
+		return {ot.p + vec.rotated_via_trig(cos_phi, sin_phi),
+				ot.p + vec.rotated_via_trig(cos_phi, -sin_phi)};
 	}
 
 	template <typename U>

@@ -166,7 +166,7 @@ istream& operator >>(istream& istr, Point<T>& p) {
 }
 
 template <typename T>
-ostream& operator <<(ostream& ostr, Point<T>& p) {
+ostream& operator <<(ostream& ostr, const Point<T>& p) {
 	if (&ostr == &cout) {
 		return ostr << p.x << " " << p.y;
 	} else {
