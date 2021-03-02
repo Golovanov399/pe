@@ -67,11 +67,10 @@ li pw_big(li a, li b, li mod) {
 }
 
 template <typename T>
-T sqr(T x) {
-	return x * x;
-}
-
-li sqr(li x) {
+conditional_t<is_same_v<T, int>, long long, T> sqr(T x) {
+	if constexpr (is_same_v<T, int>) {
+		return 1ll * x * x;
+	}
 	return x * x;
 }
 
@@ -120,7 +119,7 @@ int isqrt(long long n) {
 
 int icbrt(long long n) {
 	int x = pow(n, 1./3);
-	while (sqr<long long>(x + 1) * (x + 1) <= n) {
+	while (sqr(x + 1) * (x + 1) <= n) {
 		++x;
 	}
 	return x;
