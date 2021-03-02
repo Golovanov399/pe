@@ -120,7 +120,7 @@ int isqrt(long long n) {
 
 int icbrt(long long n) {
 	int x = pow(n, 1./3);
-	while (sqr(x + 1) * (x + 1) <= n) {
+	while (sqr<long long>(x + 1) * (x + 1) <= n) {
 		++x;
 	}
 	return x;
