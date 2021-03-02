@@ -125,3 +125,12 @@ int icbrt(long long n) {
 	}
 	return x;
 }
+
+int mex(vector<int> a) {
+	make_unique(a);
+	int res = 0;
+	while (res < (int)a.size() && a[res] == res) {
+		++res;
+	}
+	return res;
+}
