@@ -67,11 +67,10 @@ li pw_big(li a, li b, li mod) {
 }
 
 template <typename T>
-T sqr(T x) {
-	return x * x;
-}
-
-li sqr(li x) {
+conditional_t<is_same_v<T, int>, long long, T> sqr(T x) {
+	if constexpr (is_same_v<T, int>) {
+		return 1ll * x * x;
+	}
 	return x * x;
 }
 
@@ -124,4 +123,13 @@ int icbrt(long long n) {
 		++x;
 	}
 	return x;
+}
+
+int mex(vector<int> a) {
+	make_unique(a);
+	int res = 0;
+	while (res < (int)a.size() && a[res] == res) {
+		++res;
+	}
+	return res;
 }
