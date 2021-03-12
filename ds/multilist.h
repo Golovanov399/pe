@@ -83,8 +83,8 @@ public:
 	}
 
 private:
-	vector<T> head;
-	vector<T> next;
+	vector<int> head;
+	vector<int> next;
 	vector<T> data;
 	int sz;
 };
