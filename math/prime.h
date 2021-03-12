@@ -53,7 +53,8 @@ ull squfof_iter(ull n, ull k, uint its) {
 	uint sqrtn = isqrt(nk);
 	uint cutoff = isqrt(2 * sqrtn);
 
-	uint q0 = 1, p1 = sqrtn, q1 = nk - sqr(p1);
+	uint q0 = 1, p1 = sqrtn;
+	uint q1 = nk - p1 * p1;
 	if (q1 == 0) {
 		ull d = gcd(n, p1);
 		return d == n ? 1 : d;
@@ -86,12 +87,7 @@ ull squfof_iter(ull n, ull k, uint its) {
 		if (!(bits & 1) && ((tmp & 7) == 1)) {
 			sqrtq = isqrt(q0);
 			if (sqr(sqrtq) == q0) {
-				for (j = 0; j < saved.size(); ++j) {
-					if (saved[j] == sqrtq) {
-						break;
-					}
-				}
-				if (j == saved.size()) {
+				if (find(all(saved), sqrtq) == saved.end()) {
 					break;
 				}
 			}
@@ -121,7 +117,7 @@ ull squfof_iter(ull n, ull k, uint its) {
 
 	q0 = sqrtq;
 	p1 = p0 + sqrtq * ((sqrtn - p0) / sqrtq);
-	q1 = (nk - sqr(p1)) / q0;
+	q1 = (nk - sqr<ull>(p1)) / q0;
 
 	for (j = 0; j < its; ++j) {
 		uint q = 1, tmp = sqrtn + p1 - q1;
