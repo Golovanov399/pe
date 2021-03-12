@@ -27,7 +27,7 @@ vector<int> calc_phi(const vector<int>& erat) {
 	phi[1] = 1;
 	for (int i = 2; i < n; ++i) {
 		phi[i] = phi[i / erat[i]] * erat[i];
-		if (erat[i] == erat[i / erat[i]]) {
+		if (erat[i] != erat[i / erat[i]]) {
 			phi[i] -= phi[i / erat[i]];
 		}
 	}
