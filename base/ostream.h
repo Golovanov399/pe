@@ -10,6 +10,11 @@ ostream& operator <<(ostream& ostr, LI x) {
 	}
 	if (x < BIG) {
 		return ostr << (li)x;
+	} else if (x / BIG >= BIG) {
+		stringstream ss;
+		ss << setfill('0') << setw(18) << (li)(x / BIG % BIG);
+		ss << setfill('0') << setw(18) << (li)(x % BIG);
+		return ostr << (li)(x / BIG / BIG) << ss.str();
 	} else {
 		stringstream ss;
 		ss << setfill('0') << setw(18) << (li)(x % BIG);
