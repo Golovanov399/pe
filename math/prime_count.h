@@ -91,7 +91,7 @@ public:
 		}
 	}
 
-	T calc(int i) {
+	T calc(long long i) {
 		if (n / i < (int)prec.size()) {
 			return prec[n / i];
 		}
