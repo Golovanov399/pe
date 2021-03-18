@@ -77,6 +77,11 @@ public:
 		return vals[idx].second;
 	}
 
+	int count(const K& k) {
+		int idx = find_place(k);
+		return test(idx, used) && vals[idx].first == k;
+	}
+
 	const V& at(const K& k) const {
 		int idx = find_place(k);
 		assert(test(idx, used));

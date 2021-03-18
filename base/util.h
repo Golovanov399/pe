@@ -18,6 +18,10 @@ LI lcm(LI x, LI y) {
 	return x / gcd(x, y) * y;
 }
 
+LI abs(LI x) {
+	return max(x, -x);
+}
+
 template <typename T>
 T pw(T a, li b) {
 	T res = 1;
