@@ -5,12 +5,16 @@
 #include "../base/util.h"
 #include "../ds/fenwick.h"
 
-template <typename T, typename Func>
+// Let h be a completely multiplicative function, hp(n) = sum_{i=1}^n h(i).
+// Then this class allows one to calculate sum_{i=1}^{[n/k]} [i is prime] * h(i) for every k.
+// Provided function _h only needs to equal h on primes
+template <typename T, typename FuncH, typename FuncHp>
 class PrimePrefix {
 public:
 	const li n;
 	const li K;
-	const Func func;
+	const FuncH h;
+	const FuncHp hp;
 
 	static constexpr T def = 2281488;
 
@@ -18,8 +22,9 @@ public:
 	vector<int> sorted_numbers;
 	vector<vector<T>> dp;
 	vector<T> prec;
+	vector<T> h_small;
 
-	explicit PrimePrefix(li _n, Func&& _func = Func()): n(_n), K(max({20., pow(n / max(1., log(n)), 2. / 3), sqrt(n) + 100})), func(_func) {
+	explicit PrimePrefix(li _n, FuncH&& _h = FuncH(), FuncHp&& _hp = FuncHp()): n(_n), K(max({20., pow(n / max(1., log(n)), 2. / 3), sqrt(n) + 100})), h(_h), hp(_hp) {
 		tie(erat, primes) = sieve(K);
 		dp.resize(n / (K - 1) + 1);
 		for (int i = 1, j = (int)primes.size() - 1; n / i >= K; ++i) {
@@ -39,10 +44,14 @@ public:
 
 		prec.resize(K);
 		for (int p : primes) {
-			prec[p] += 1;	// here
+			prec[p] += h(p);
 		}
 		for (int i = 1; i < (int)prec.size(); ++i) {
 			prec[i] += prec[i - 1];
+		}
+		h_small.resize(K, 1);
+		for (int i = 2; i < K; ++i) {
+			h_small[i] = h_small[i / erat[i]] * h(erat[i]);
 		}
 	}
 
@@ -59,7 +68,7 @@ public:
 		}
 		Fenwick<T> f(K);
 		for (int i = 1; i < K; ++i) {
-			f.add(i, 1);	// here
+			f.add(i, h_small[i]);
 		}
 		for (auto& v : dp) {
 			fill(all(v), 0);
@@ -67,24 +76,24 @@ public:
 		int idx = (int)sorted_numbers.size() - 2;
 		for (int j = 0; j < (int)dp[1].size(); ++j) {
 			for (int i = 1; i < (int)dp.size() && j < (int)dp[i].size(); ++i) {
-				if (j > 0 && n / i >= K && i * primes[j - 1] >= (int)dp.size()) {
-					dp[i][j] -= f.get(n / i / primes[j - 1]);
+				if (j > 0 && n / i >= K && 1ll * i * primes[j - 1] >= (int)dp.size()) {
+					dp[i][j] -= f.get(n / i / primes[j - 1]) * h(primes[j - 1]);
 				}
 			}
 			while (idx >= 0 && erat[sorted_numbers[idx]] < primes[j]) {
-				f.add(sorted_numbers[idx], -1);	// here
+				f.add(sorted_numbers[idx], -h_small[sorted_numbers[idx]]);
 				--idx;
 			}
 			for (int i = 1; i < (int)dp.size() && j < (int)dp[i].size(); ++i) {
 				if (j == 0) {
-					dp[i][j] += n / i;	// here
+					dp[i][j] += hp(n / i);
 				} else if (n / i < K) {
 					dp[i][j] += f.get(n / i);
 				} else {
 					dp[i][j] += dp[i][j - 1];
-					if (li ni = i * primes[j - 1]; ni < (int)dp.size()) {
+					if (li ni = 1ll * i * primes[j - 1]; ni < (int)dp.size()) {
 						int mn = min(j - 1, (int)dp[ni].size() - 1);
-						dp[i][j] -= dp[ni][mn] + mn - (j - 1);
+						dp[i][j] -= (dp[ni][mn] + prec[primes[mn] - 1] - prec[primes[j - 1] - 1]) * h(primes[j - 1]);
 					}
 				}
 			}
@@ -92,6 +101,11 @@ public:
 	}
 
 	T calc(long long i) {
+		// for (int i = 1; i < (int)dp.size(); ++i) {
+		// 	for (int j = 0; j < (int)dp[i].size(); ++j) {
+		// 		cerr << n / i << " " << primes[j] << ": " << dp[i][j] << "\n";
+		// 	}
+		// }
 		if (n / i < (int)prec.size()) {
 			return prec[n / i];
 		}
@@ -102,7 +116,7 @@ public:
 				return a.k > b.k;
 			});
 			Fenwick<T> f(K);
-			f.add(1, 1);	// here
+			f.add(1, 1);
 			int idx = 0;
 			for (int k : sorted_numbers) {
 				if (idx >= (int)qrs.size()) {
@@ -112,7 +126,7 @@ public:
 					qrs[idx].ans = f.get(qrs[idx].n);
 					++idx;
 				}
-				f.add(k, 1);	// here
+				f.add(k, h_small[k]);
 			}
 			while (idx < (int)qrs.size()) {
 				qrs[idx].ans = f.get(qrs[idx].n);
@@ -122,7 +136,7 @@ public:
 				return a.id < b.id;
 			});
 		}
-		return calc_queries(i, (int)dp[i].size(), qrs) + (int)dp[i].size() - 1;	// here
+		return calc_queries(i, (int)dp[i].size(), qrs) + prec[primes[(int)dp[i].size() - 1]] - 1;
 	}
 
 private:
@@ -147,19 +161,19 @@ private:
 	T calc_queries(li i, int j, vector<Query>& qrs) {
 		const li curn = n / i;
 		if (j == 0) {
-			return curn;	// here
+			return hp(curn);
 		} else if (curn < K) {
 			T ans = qrs.back().ans;
 			qrs.pop_back();
 			return ans;
 		} else if (j >= (int)dp[i].size()) {
-			return calc_queries(i, (int)dp[i].size() - 1, qrs) + ((int)dp[i].size() - 1) - j;
+			return calc_queries(i, (int)dp[i].size() - 1, qrs) + prec[primes[(int)dp[i].size() - 1] - 1] - prec[primes[j] - 1];
 		} else if (dp[i][j] != def) {
 			return dp[i][j];
 		} else {
 			T ans = 0;
 			ans += calc_queries(i, j - 1, qrs);
-			ans -= calc_queries(i * primes[j - 1], j - 1, qrs);
+			ans -= calc_queries(i * primes[j - 1], j - 1, qrs) * h(primes[j - 1]);
 			return dp[i][j] = ans;
 		}
 	}
@@ -173,5 +187,20 @@ public:
 	}
 };
 
-using PrimeCount = PrimePrefix<li, PowerClass<li, 0>>;
+template <typename T, size_t p>
+class RisingClass {
+public:
+	T operator ()(T x) const {
+		T res = 1;
+		for (size_t i = 0; i < p; ++i) {
+			res *= x + i;
+			res /= i + 1;
+		}
+		return res;
+	}
+};
 
+using PrimeCount = PrimePrefix<li, PowerClass<li, 0>, PowerClass<li, 1>>;
+
+template <typename T>
+using PrimeSum = PrimePrefix<T, PowerClass<T, 1>, RisingClass<T, 2>>;
