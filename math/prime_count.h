@@ -16,7 +16,7 @@ public:
 	const FuncH h;
 	const FuncHp hp;
 
-	static constexpr T def = 2281488;
+	const T def = 2281488;
 
 	vector<int> erat, primes;
 	vector<int> sorted_numbers;
