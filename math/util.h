@@ -52,3 +52,31 @@ struct InvfactStuff {
 		return fact[n] * invfact[n - k];
 	}
 };
+
+template <typename Func>
+void rec_pythagorean(long long x, long long y, long long z, long long n, const Func& f) {
+	if (z > n) {
+		return;
+	}
+	f(x, y, z);
+	rec_pythagorean(
+		1 * x - 2 * y + 2 * z,
+		2 * x - 1 * y + 2 * z,
+		2 * x - 2 * y + 3 * z,
+		n, f);
+	rec_pythagorean(
+		1 * x + 2 * y + 2 * z,
+		2 * x + 1 * y + 2 * z,
+		2 * x + 2 * y + 3 * z,
+		n, f);
+	rec_pythagorean(
+		-1 * x + 2 * y + 2 * z,
+		-2 * x + 1 * y + 2 * z,
+		-2 * x + 2 * y + 3 * z,
+		n, f);
+}
+
+template <typename Func>
+void for_all_pythagorean_triples(long long n, const Func& f) {
+	rec_pythagorean(3, 4, 5, n, f);
+}
