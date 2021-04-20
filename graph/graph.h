@@ -2,6 +2,7 @@
 
 #include "../base/base.h"
 #include "../base/istream.h"
+#include "../ds/skewheap.h"
 
 enum GraphType {
 	Undirected,
@@ -16,6 +17,7 @@ enum EdgeType {
 enum DistanceFindingAlgo {
 	DijkstraPriorityQueue,
 	DijkstraSet,
+	DijkstraSkew,
 	Dijkstra = DijkstraPriorityQueue,
 	FordBellman,
 	FordBellmanBfs
@@ -152,6 +154,8 @@ public:
 			dijkstra_pq(v, d, par);
 		} else if (algo == DijkstraSet) {
 			dijkstra_set(v, d, par);
+		} else if (algo == DijkstraSkew) {
+			dijkstra_skew(v, d, par);
 		} else if (algo == FordBellman) {
 			ford_bellman(v, d, par);
 		} else if (algo == FordBellmanBfs) {
@@ -170,6 +174,8 @@ public:
 			dijkstra_pq(v, d, par);
 		} else if (algo == DijkstraSet) {
 			dijkstra_set(v, d, par);
+		} else if (algo == DijkstraSkew) {
+			dijkstra_skew(v, d, par);
 		} else if (algo == FordBellman) {
 			ford_bellman(v, d, par);
 		} else if (algo == FordBellmanBfs) {
@@ -294,6 +300,33 @@ private:
 					d[to] = val + edges[eid].w;
 					par[to] = v;
 					S.insert({d[to], to});
+				}
+			}
+		}
+	}
+
+	void dijkstra_skew(int start, vector<EdgeInt>& d, vector<int>& par) {
+		d.assign(n, numeric_limits<EdgeInt>::max());
+		par.assign(n, -1);
+		d[start] = 0;
+		SkewHeap<EdgeInt> heap(n);
+		heap[start] = 0;
+		heap.root = start;
+		while (!heap.empty()) {
+			auto val = heap.top();
+			int v = heap.root;
+			heap.pop();
+			for (int eid : a[v]) {
+				assert(edges[eid].w >= 0);
+				auto to = other_end(edges[eid], v);
+				if (par[to] == -1) {
+					heap[to] = d[to] = val + edges[eid].w;
+					par[to] = v;
+					heap.root = heap.meld(heap.root, to);
+				} else if (d[to] > val + edges[eid].w) {
+					d[to] = val + edges[eid].w;
+					par[to] = v;
+					heap.update(to, d[to]);
 				}
 			}
 		}
