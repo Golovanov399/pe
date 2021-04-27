@@ -16,7 +16,7 @@ struct Fenwick {
 		}
 	}
 
-	V get(int pos) {
+	V get(int pos) const {
 		V res = 0;
 		while (pos >= 0) {
 			res += a[pos];
@@ -25,7 +25,21 @@ struct Fenwick {
 		return res;
 	}
 
-	V get(int l, int r) {
+	V get(int l, int r) const {
 		return get(r - 1) - get(l - 1);
+	}
+
+	int get_min_atleast(V x) const {
+		int res = 0;
+		for (int i = 1 << (31 - __builtin_clz(n)); i; i >>= 1) {
+			if (res + i > n) {
+				continue;
+			}
+			if (a[res + i - 1] < x) {
+				res += i;
+				x -= a[res - 1];
+			}
+		}
+		return res;
 	}
 };

@@ -77,6 +77,7 @@ public:
 			lengths[pos[i]] = cur;
 		}
 		lengths.erase(lengths.begin());
+		adjacent_lengths = lengths;
 		common_lengths = decltype(common_lengths){lengths};
 		return common_lengths;
 	}
@@ -96,10 +97,15 @@ public:
 		return res;
 	}
 
+	vector<int> get_adjacent_lengths() const {
+		return adjacent_lengths;
+	}
+
 private:
 	string s;
 	int n;
 
+	vector<int> adjacent_lengths;
 	vector<int> suffix_order;
 	Sparse<int, Min<int>> common_lengths;
 };
