@@ -8,8 +8,8 @@ void and_wh(T b, T e, bool inverse = false) {
 		return;
 	}
 	auto m = b + (e - b) / 2;
-	and_wh(b, m);
-	and_wh(m, e);
+	and_wh(b, m, inverse);
+	and_wh(m, e, inverse);
 	while (m != e) {
 		inverse ? *b -= *m : *b += *m;
 		++b, ++m;
@@ -22,8 +22,8 @@ void or_wh(T b, T e, bool inverse = false) {
 		return;
 	}
 	auto m = b + (e - b) / 2;
-	or_wh(b, m);
-	or_wh(m, e);
+	or_wh(b, m, inverse);
+	or_wh(m, e, inverse);
 	while (m != e) {
 		inverse ? *m -= *b : *m += *b;
 		++b, ++m;
