@@ -97,7 +97,12 @@ public:
 		return edges.size();
 	}
 
+	vector<Edge<etype>> get_edges() const {
+		return edges;
+	}
+
 	vector<vector<int>> get_connected_components() {
+		static_assert(gtype == Undirected);
 		used.assign(n, false);
 		vector<vector<int>> comps;
 		auto add = [&](int v) {
@@ -107,6 +112,50 @@ public:
 			if (!used[i]) {
 				comps.push_back({});
 				dfs(i, -1, {}, add, {});
+			}
+		}
+		return comps;
+	}
+
+	vector<vector<int>> get_sccs() {
+		static_assert(gtype == Directed);
+		used.assign(n, false);
+		// seem to need custom dfs :/
+		vector<vector<int>> comps;
+		vector<int> h(n);
+		vector<int> st;
+		int curh = 0;
+		function<int(int)> dfs = [&](int v) {
+			used[v] = 1;
+			st.push_back(v);
+			int res = h[v];
+			for (int eid : a[v]) {
+				int to = edges[eid].to;
+				if (!used[to]) {
+					h[to] = curh++;
+					res = min(res, dfs(to));
+				} else if (used[to] == 1) {
+					res = min(res, h[to]);
+				}
+			}
+			if (res == h[v]) {
+				comps.push_back({});
+				while (true) {
+					int u = st.back();
+					st.pop_back();
+					comps.back().push_back(u);
+					used[u] = 2;
+					if (u == v) {
+						break;
+					}
+				}
+			}
+			return res;
+		};
+		for (int i = 0; i < n; ++i) {
+			if (!used[i]) {
+				h[i] = curh++;
+				dfs(i);
 			}
 		}
 		return comps;
