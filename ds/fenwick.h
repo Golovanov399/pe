@@ -42,4 +42,18 @@ struct Fenwick {
 		}
 		return res;
 	}
+
+	int get_max_atmost(V x) const {
+		int res = 0;
+		for (int i = 1 << (31 - __builtin_clz(n)); i; i >>= 1) {
+			if (res + i > n) {
+				continue;
+			}
+			if (a[res + i - 1] <= x) {
+				res += i;
+				x -= a[res - 1];
+			}
+		}
+		return res - 1;
+	}
 };
