@@ -258,6 +258,57 @@ public:
 		return d;
 	}
 
+	vector<int> find_negative_cycle() {
+		static_assert(etype == Weighted);
+		static_assert(gtype == Directed);
+		vector<int> order(n);
+		iota(all(order), 0);
+		vector<EdgeInt> dist(n, 0);
+		vector<int> par(n, -1);
+		for (int iter = 0; iter < n; ++iter) {
+			bool changed = false;
+			for (int v = 0; v < n; ++v) {
+				for (int eid : a[v]) {
+					int to = other_end(edges[eid], v);
+					if (dist[to] - edges[eid].w > dist[v]) {
+						changed = true;
+						par[to] = v;
+						dist[to] = dist[v] + edges[eid].w;
+					}
+				}
+			}
+			if (!changed) {
+				return {};
+			}
+		}
+		used.assign(n, 0);
+		for (int i = 0; i < n; ++i) {
+			if (used[i]) {
+				continue;
+			}
+			int v = i;
+			while (v > -1 && !used[v]) {
+				used[v] = 1;
+				v = par[v];
+			}
+			if (v > -1 && used[v] == 1) {
+				vector<int> cycle;
+				while (used[v] == 1) {
+					cycle.push_back(v);
+					used[v] = 2;
+					v = par[v];
+				}
+				reverse(all(cycle));
+				return cycle;
+			} else {
+				for (v = i; v > -1 && used[v] != 2; v = par[v]) {
+					used[v] = 2;
+				}
+			}
+		}
+		assert(false);
+	}
+
 private:
 	int n;
 	vector<vector<int>> a;
@@ -323,7 +374,7 @@ private:
 			for (int eid : a[v]) {
 				assert(edges[eid].w >= 0);
 				auto to = other_end(edges[eid], v);
-				if (d[to] > val + edges[eid].w) {
+				if (d[to] - edges[eid].w > val) {
 					d[to] = val + edges[eid].w;
 					par[to] = v;
 					pq.push({d[to], to});
@@ -344,7 +395,7 @@ private:
 			for (int eid : a[v]) {
 				assert(edges[eid].w >= 0);
 				auto to = other_end(edges[eid], v);
-				if (d[to] > val + edges[eid].w) {
+				if (d[to] - edges[eid].w > val) {
 					S.erase({d[to], to});
 					d[to] = val + edges[eid].w;
 					par[to] = v;
@@ -372,7 +423,7 @@ private:
 					heap[to] = d[to] = val + edges[eid].w;
 					par[to] = v;
 					heap.root = heap.meld(heap.root, to);
-				} else if (d[to] > val + edges[eid].w) {
+				} else if (d[to] - edges[eid].w > val) {
 					d[to] = val + edges[eid].w;
 					par[to] = v;
 					heap.update(to, d[to]);
@@ -399,7 +450,7 @@ private:
 			for (int v : order) {
 				for (int eid : a[v]) {
 					int to = other_end(edges[eid], v);
-					if (dist[to] > dist[v] + edges[eid].w) {
+					if (dist[to] - edges[eid].w > dist[v]) {
 						changed = true;
 						par[to] = v;
 						dist[to] = dist[v] + edges[eid].w;
@@ -429,7 +480,7 @@ private:
 			in_queue[v] = false;
 			for (int eid : a[v]) {
 				int to = other_end(edges[eid], v);
-				if (dist[to] > dist[v] + edges[eid].w) {
+				if (dist[to] - edges[eid].w > dist[v]) {
 					dist[to] = dist[v] + edges[eid].w;
 					par[to] = v;
 					if (!in_queue[to]) {
