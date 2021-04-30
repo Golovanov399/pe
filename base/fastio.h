@@ -64,6 +64,7 @@ inline void read(T& x) {
 }
 
 inline void read() {}
+
 template <typename Head, typename... Tail>
 inline void read(Head& head, Tail&... tail) {
 	read(head);
@@ -74,10 +75,12 @@ inline void write(char c) {
 	if (por > SZ - 32) flush();
 	obuf[por++] = c;
 }
+
 inline void write(bool b) { 
 	if (por > SZ - 32) flush();
 	obuf[por++] = b ? '1' : '0'; 
 }
+
 template <typename T>
 inline void write(T x) {
 	if (por > SZ - 32) flush();
@@ -126,6 +129,7 @@ inline void write(Head&& head, Tail&&... tail) {
 	write(head);
 	write(forward<Tail>(tail)...);
 }
+
 template <typename... Args>
 inline void writeln(Args&&... x) {
 	write(forward<Args>(x)...);

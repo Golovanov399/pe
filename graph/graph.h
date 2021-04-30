@@ -40,7 +40,7 @@ struct Edge<Weighted> {
 };
 
 template <EdgeType etype>
-int other_end(const Edge<etype>& e, int v) {
+inline int other_end(const Edge<etype>& e, int v) {
 	return e.from == v ? e.to : e.from;
 }
 
@@ -101,6 +101,17 @@ public:
 		return edges;
 	}
 
+	vector<Edge<etype>> operator [](int v) const {
+		vector<Edge<etype>> eds;
+		for (int i : a[v]) {
+			eds.push_back(edges[i]);
+			if (eds.back().from != v) {
+				swap(eds.back().from, eds.back().to);
+			}
+		}
+		return eds;
+	}
+
 	vector<vector<int>> get_connected_components() {
 		static_assert(gtype == Undirected);
 		used.assign(n, false);
@@ -115,6 +126,111 @@ public:
 			}
 		}
 		return comps;
+	}
+
+	vector<int> topsort() {
+		// returns garbage if there is a cycle
+		static_assert(gtype == Directed);
+		used.assign(n, false);
+		vector<int> res;
+		function<void(int)> dfs = [&](int v) {
+			used[v] = 1;
+			for (int eid : a[v]) {
+				int to = other_end(edges[eid], v);
+				if (used[to]) {
+					continue;
+				}
+				dfs(to);
+			}
+			res.push_back(v);
+		};
+		for (int i = 0; i < n; ++i) {
+			if (!used[i]) {
+				dfs(i);
+			}
+		}
+		return res;
+	}
+
+	vector<Edge<etype>> euler_cycle() {
+		// returns {} if there is no cycle
+		int v = 0;
+		while (v < n && a[v].empty()) {
+			++v;
+		}
+		if (v == n) {
+			return {};
+		}
+		vector<Edge<etype>> res;
+		vector<char> used_edge(edges.size());
+		vector<int> ptr(n, 0);
+		function<void(int)> rec = [&](int v) {
+			while (ptr[v] < (int)a[v].size() && used_edge[a[v][ptr[v]]]) {
+				++ptr[v];
+			}
+			if (ptr[v] == (int)a[v].size()) {
+				return;
+			}
+			auto e = edges[a[v][ptr[v]]];
+			if (e.from != v) {
+				swap(e.from, e.to);
+			}
+			used_edge[a[v][ptr[v]]] = 1;
+			rec(e.to);
+			res.push_back(e);
+			rec(v);
+		};
+		rec(v);
+		reverse(all(res));
+		for (int i = 1; i < (int)res.size(); ++i) {
+			if (res[i].from != res[i - 1].to) {
+				return {};
+			}
+		}
+		if (res.size() != edges.size() || res[0].from != res.back().to) {
+			return {};
+		}
+		return res;
+	}
+
+	vector<Edge<etype>> euler_path(int start, int finish) {
+		// returns {} if there is no path
+		vector<Edge<etype>> res;
+		vector<char> used_edge(edges.size());
+		vector<int> ptr(n, 0);
+		function<void(int)> rec = [&](int v) {
+			while (ptr[v] < (int)a[v].size() && used_edge[a[v][ptr[v]]]) {
+				++ptr[v];
+			}
+			if (ptr[v] == (int)a[v].size()) {
+				return;
+			}
+			auto e = edges[a[v][ptr[v]]];
+			if (e.from != v) {
+				swap(e.from, e.to);
+			}
+			used_edge[a[v][ptr[v]]] = 1;
+			rec(e.to);
+			res.push_back(e);
+			rec(v);
+		};
+		rec(start);
+		int sz = res.size();
+		rec(finish);
+		rotate(res.begin(), sz + all(res));
+		reverse(all(res));
+		for (int i = 1; i < (int)res.size(); ++i) {
+			if (res[i].from != res[i - 1].to) {
+				return {};
+			}
+		}
+		if (res.empty()) {
+			return res;
+		}
+		if (res.size() != edges.size() || res[0].from != start || res.back().to != finish) {
+			return {};
+		}
+		return res;
 	}
 
 	vector<vector<int>> get_sccs() {

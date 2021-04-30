@@ -137,3 +137,13 @@ int mex(vector<int> a) {
 	}
 	return res;
 }
+
+template <typename T, typename Iter>
+int find_position(Iter b, Iter e, const T& x) {
+	auto it = lower_bound(b, e, x);
+	if (it != e && *it == x) {
+		return it - b;
+	} else {
+		return -1;
+	}
+}
