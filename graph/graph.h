@@ -425,6 +425,127 @@ public:
 		assert(false);
 	}
 
+	vector<pair<int, int>> matching() {	// better copypaste from https://judge.yosupo.jp/submission/31741
+		static_assert(gtype == Undirected);
+		vector<int> match(n, -1);
+
+		vector<int> p(n, -1);
+		vector<int> prt(n, -1);
+
+		auto augment = [&](int v, int u) {
+			while (true) {
+				int nx = match[p[v]];
+				match[v] = p[v];
+				match[p[v]] = v;
+				if (p[v] == u) {
+					break;
+				}
+				v = nx;
+			}
+		};
+
+		{
+			vector<int> perm(n);
+			iota(all(perm), 0);
+			random_shuffle(all(perm));
+			for (int v : perm) {
+				if (match[v] > -1) {
+					continue;
+				}
+				for (int eid : a[v]) {
+					int to = other_end(edges[eid], v);
+					if (match[to] == -1) {
+						match[v] = to;
+						match[to] = v;
+						break;
+					}
+				}
+			}
+		}
+
+		vector<int> root(n, -1);
+		vector<int> last(n, 0);
+		int timer = 0;
+
+		auto lca = [&](int u, int v) {
+			++timer;
+			while (true) {
+				if (v > -1) {
+					if (last[v] == timer) {
+						return v;
+					}
+					last[v] = timer;
+					if (match[v] == -1) {
+						v = -1;
+					} else {
+						v = root[p[match[v]]];
+					}
+				}
+				swap(u, v);
+			}
+		};
+
+		auto bfs = [&](int from) {
+			fill(all(p), -1);
+			fill(all(prt), -1);
+			iota(all(root), 0);
+			queue<int> q;
+			q.push(from);
+			prt[from] = 0;
+
+			auto blossom = [&](int v, int u, int rt) {
+				while (root[v] != rt) {
+					p[v] = u;
+					u = match[v];
+					if (prt[u] == 1) {
+						q.push(u);
+						prt[u] = 0;
+					}
+					root[v] = root[u] = rt;
+					v = p[u];
+				}
+			};
+
+			while (!q.empty()) {
+				int v = q.front();
+				q.pop();
+				for (int eid : a[v]) {
+					int to = other_end(edges[eid], v);
+					if (prt[to] == -1) {
+						p[to] = v;
+						if (int nx = match[to]; nx == -1) {
+							augment(to, from);
+							return;
+						} else {
+							prt[to] = 1;
+							q.push(match[to]);
+							prt[match[to]] = 0;
+						}
+					} else if (prt[to] == 0 && root[v] != root[to]) {
+						int rt = lca(root[v], root[to]);
+						blossom(to, v, rt);
+						blossom(v, to, rt);
+					}
+				}
+			}
+		};
+
+		for (int i = 0; i < n; ++i) {
+			if (match[i] > -1) {
+				continue;
+			}
+			bfs(i);
+		}
+
+		vector<pair<int, int>> res;
+		for (int i = 0; i < n; ++i) {
+			if (i < match[i]) {
+				res.push_back({i, match[i]});
+			}
+		}
+		return res;
+	}
+
 private:
 	int n;
 	vector<vector<int>> a;
