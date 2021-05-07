@@ -546,12 +546,37 @@ public:
 		return res;
 	}
 
+	void reverse() {
+		static_assert(gtype == Directed);
+		for (int i = 0; i < n; ++i) {
+			a[i].clear();
+		}
+		for (int i = 0; i < (int)edges.size(); ++i) {
+			auto& e = edges[i];
+			swap(e.from, e.to);
+			a[e.from].push_back(i);
+		}
+	}
+
+	Graph reversed() const {
+		auto res = *this;
+		res.reverse();
+		return res;
+	}
+
+	vector<int> get_last_order() const {
+		return order;
+	}
+
+	vector<EdgeInt> k_shortest(int k, int from, int to) const;
+
 private:
 	int n;
 	vector<vector<int>> a;
 	vector<Edge<etype>> edges;
 
 	vector<char> used;
+	vector<int> order;
 
 	void dfs(int v, int pid, const optional<function<void(int, int)>>& pre, const optional<function<void(int)>>& in, const optional<function<void(int, int)>>& post) {
 		used[v] = 1;
@@ -577,6 +602,7 @@ private:
 	}
 
 	void bfs(int start, vector<int>& d, vector<int>& par) {
+		order.clear();
 		d.assign(n, -1);
 		par.assign(n, -1);
 		d[start] = 0;
@@ -584,6 +610,7 @@ private:
 		q.push(start);
 		while (!q.empty()) {
 			auto v = q.front();
+			order.push_back(v);
 			q.pop();
 			for (int eid : a[v]) {
 				int u = other_end(edges[eid], v);
@@ -597,6 +624,7 @@ private:
 	}
 
 	void dijkstra_pq(int start, vector<EdgeInt>& d, vector<int>& par) {
+		order.clear();
 		d.assign(n, numeric_limits<EdgeInt>::max());
 		par.assign(n, -1);
 		d[start] = 0;
@@ -608,6 +636,7 @@ private:
 			if (d[v] != val) {
 				continue;
 			}
+			order.push_back(v);
 			for (int eid : a[v]) {
 				assert(edges[eid].w >= 0);
 				auto to = other_end(edges[eid], v);
@@ -621,6 +650,7 @@ private:
 	}
 
 	void dijkstra_set(int start, vector<EdgeInt>& d, vector<int>& par) {
+		order.clear();
 		d.assign(n, numeric_limits<EdgeInt>::max());
 		par.assign(n, -1);
 		d[start] = 0;
@@ -629,6 +659,7 @@ private:
 		while (!S.empty()) {
 			auto [val, v] = *S.begin();
 			S.erase(S.begin());
+			order.push_back(v);
 			for (int eid : a[v]) {
 				assert(edges[eid].w >= 0);
 				auto to = other_end(edges[eid], v);
@@ -643,6 +674,7 @@ private:
 	}
 
 	void dijkstra_skew(int start, vector<EdgeInt>& d, vector<int>& par) {
+		order.clear();
 		d.assign(n, numeric_limits<EdgeInt>::max());
 		par.assign(n, -1);
 		d[start] = 0;
@@ -653,6 +685,7 @@ private:
 			auto val = heap.top();
 			int v = heap.root;
 			heap.pop();
+			order.push_back(v);
 			for (int eid : a[v]) {
 				assert(edges[eid].w >= 0);
 				auto to = other_end(edges[eid], v);
