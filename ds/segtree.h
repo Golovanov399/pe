@@ -46,6 +46,20 @@ public:
 
 	template <typename... Args>
 	void update_point(int pos, Args&&... args) {
+		{
+			int v = 1, l = 0, r = n;
+			while (v < n) {
+				push(v);
+				int m = (l + r) / 2;
+				if (pos < m) {
+					v *= 2;
+					r = m;
+				} else {
+					v = v * 2 + 1;
+					l = m;
+				}
+			}
+		}
 		pos += n;
 		a[pos].update(forward<Args>(args)...);
 		while (pos > 1) {
@@ -59,7 +73,7 @@ public:
 		_update(1, 0, n, l, r, forward<Args>(args)...);
 	}
 
-private:
+protected:
 	int n;
 	vector<Node> a;
 
@@ -72,6 +86,7 @@ private:
 		}
 	}
 
+private:
 	Node get(int v, int l1, int r1, int l, int r) {
 		if (l >= r1 || l1 >= r) {
 			return Node{};
