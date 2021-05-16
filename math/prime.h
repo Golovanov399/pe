@@ -24,14 +24,15 @@ bool miller_rabin(long long n, long long a) {
 	return false;
 }
 
-bool is_prime(long long n) {
+bool is_prime(long long n, int iters = 30) {
+	// iters used to be 8, but it doesn't work here: https://dmoj.ca/problem/bf3hard
 	if (n == 1) {
 		return false;
 	}
 	if (n % 2 == 0) {
 		return n == 2;
 	}
-	for (int i = 2; i < n && i < 8; ++i) {
+	for (int i = 2; i < n && i < iters; ++i) {
 		if (!miller_rabin(n, i)) {
 			return false;
 		}
