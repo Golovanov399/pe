@@ -15,6 +15,7 @@ public:
 	}
 
 	void circle(ld x, ld y, ld r, string fill = "black", string outline = "", ld width = 1, ld alpha = 1.) {
+		flip(y);
 		relax(x - r, y - r);
 		relax(x + r, y + r);
 		ss << "<circle cx=\"" << x << "\" cy=\"" << y << "\" r=\"" << r << "\"";
@@ -22,6 +23,8 @@ public:
 	}
 
 	void rect(ld x1, ld y1, ld x2, ld y2, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
+		flip(y1);
+		flip(y2);
 		relax(x1, y1);
 		relax(x2, y2);
 		if (x1 > x2) {
@@ -35,6 +38,8 @@ public:
 	}
 
 	void line(ld x1, ld y1, ld x2, ld y2, string outline = "black", ld width = 1, ld alpha = 1.) {
+		flip(y1);
+		flip(y2);
 		relax(x1, y1);
 		relax(x2, y2);
 		ss << "<line x1=\"" << x1 << "\" y1=\"" << y1 << "\" x2=\"" << x2 << "\" y2=\"" << y2 << "\"";
@@ -51,10 +56,17 @@ public:
 			if (i) {
 				ss << " ";
 			}
-			ss << pts[i].x << "," << pts[i].y;
+			ss << pts[i].x << "," << -pts[i].y;
 		}
 		ss << "\"";
 		finish_attributes(fill, outline, width, alpha);
+	}
+
+	void text(const string& s, ld x, ld y, string fill = "black", ld size = 2) {
+		flip(y);
+		relax(x - s.size() * size / 2, y - size / 2);
+		relax(x + s.size() * size / 2, y + size / 2);
+		ss << "<text x=\"" << x << "\" y=\"" << y << "\" fill=\"" << fill << "\" font-size=\"" << size << "pt\" text-anchor=\"middle\" dominant-baseline=\"middle\">" << s << "</text>";
 	}
 
 	template <typename T>
@@ -102,6 +114,11 @@ private:
 	template <typename T>
 	void relax(const Point<T>& p) {
 		relax(p.x, p.y);
+	}
+
+	template <typename T>
+	void flip(T& y) {
+		y = -y;
 	}
 
 	void finish_attributes(string fill, string outline, ld width, ld alpha) {
