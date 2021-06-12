@@ -42,15 +42,15 @@ public:
 			return erat[i] > erat[j];
 		});
 
-		prec.resize(K);
+		prec.resize(K + 1);
 		for (int p : primes) {
 			prec[p] += h(p);
 		}
 		for (int i = 1; i < (int)prec.size(); ++i) {
 			prec[i] += prec[i - 1];
 		}
-		h_small.resize(K, 1);
-		for (int i = 2; i < K; ++i) {
+		h_small.resize(K + 1, 1);
+		for (int i = 2; i <= K; ++i) {
 			h_small[i] = h_small[i / erat[i]] * h(erat[i]);
 		}
 	}
