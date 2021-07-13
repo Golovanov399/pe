@@ -13,7 +13,7 @@ struct TypeModular {
 	}
 
 	TypeModular(long long _val = 0) {
-		if (_val < 0 || _val >= mod()) {
+		if (_val < 0 || (_val > 0 && _val >= mod())) {
 			val = _val % mod();
 			if (val < 0) {
 				val += mod();
