@@ -85,7 +85,6 @@ public:
 			}
 			tmp = multiply(tmp, vector<outer_type>{a.begin(), a.begin() + min(2 * len, (int)a.size())});
 			tmp.resize(2 * len);
-			cerr << a << " " << b << " " << tmp << "\n";
 			for (int i = 0; i < len; ++i) {
 				tmp[i] = 2 * b[i] - tmp[i];
 				tmp[len + i] = -tmp[len + i];
