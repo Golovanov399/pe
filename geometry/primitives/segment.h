@@ -16,7 +16,7 @@ struct Segment {
 	}
 
 	friend bool are_parallel(const Segment& l1, const Segment& l2) {
-		return is_parallel(l1, l2);
+		return l1.is_parallel(l2);
 	}
 
 	bool contains(const Point<T>& pt) const {
