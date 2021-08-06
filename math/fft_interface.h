@@ -85,6 +85,7 @@ public:
 			}
 			tmp = multiply(tmp, vector<outer_type>{a.begin(), a.begin() + min(2 * len, (int)a.size())});
 			tmp.resize(2 * len);
+			cerr << a << " " << b << " " << tmp << "\n";
 			for (int i = 0; i < len; ++i) {
 				tmp[i] = 2 * b[i] - tmp[i];
 				tmp[len + i] = -tmp[len + i];
@@ -139,6 +140,28 @@ public:
 		}
 		b.resize(prec);
 		return b;
+	}
+
+	pair<vector<outer_type>, vector<outer_type>> divmod(vector<outer_type> a, vector<outer_type> b) {
+		assert(!b.empty());
+		assert(b.back() != 0);
+		if (a.size() < b.size()) {
+			return {{0}, a};
+		}
+		reverse(all(a));
+		reverse(all(b));
+		auto q = inverse(b, a.size() - b.size() + 1);
+		q = multiply(a, q);
+		q.resize(a.size() - b.size() + 1);
+		reverse(all(q));
+		reverse(all(a));
+		reverse(all(b));
+		vector<outer_type> r(b.size());
+		auto bq = multiply(b, q);
+		for (int i = 0; i < (int)r.size(); ++i) {
+			r[i] = a[i] - bq[i];
+		}
+		return {q, r};
 	}
 
 protected:
