@@ -9,7 +9,7 @@ inline std::uint_fast32_t custom_rand() {
 	return rr();
 }
 
-inline std::uint_fast32_t custom_rand64() {
+inline std::uint_fast64_t custom_rand64() {
 	return rr64();
 }
 
