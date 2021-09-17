@@ -141,6 +141,28 @@ public:
 		return b;
 	}
 
+	pair<vector<outer_type>, vector<outer_type>> divmod(vector<outer_type> a, vector<outer_type> b) {
+		assert(!b.empty());
+		assert(b.back() != 0);
+		if (a.size() < b.size()) {
+			return {{0}, a};
+		}
+		reverse(all(a));
+		reverse(all(b));
+		auto q = inverse(b, a.size() - b.size() + 1);
+		q = multiply(a, q);
+		q.resize(a.size() - b.size() + 1);
+		reverse(all(q));
+		reverse(all(a));
+		reverse(all(b));
+		vector<outer_type> r(b.size());
+		auto bq = multiply(b, q);
+		for (int i = 0; i < (int)r.size(); ++i) {
+			r[i] = a[i] - bq[i];
+		}
+		return {q, r};
+	}
+
 protected:
 	static constexpr int L = 31 - __builtin_clz(N);
 	static_assert(!(N & (N - 1)));

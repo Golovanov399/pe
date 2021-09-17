@@ -15,7 +15,7 @@ struct Line {
 	}
 
 	friend bool are_parallel(const Line& l1, const Line& l2) {
-		return is_parallel(l1, l2);
+		return l1.is_parallel(l2);
 	}
 
 	bool contains(const Point<T>& pt) const {
