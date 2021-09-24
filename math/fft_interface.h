@@ -188,45 +188,94 @@ public:
 		return {q, r};
 	}
 
-	virtual Poly multipoint(Poly p, const vector<outer_type>& x) {
-		vector<Poly> seg_prods;
-		seg_prods.reserve(2 * (int)x.size() - 1);
-		function<void(int, int)> push_prods = [&](int l, int r) {
-			if (r == l + 1) {
-				seg_prods.push_back({-x[l], 1});
+	struct ProductTree {
+		int n;
+		vector<Poly> a;
+		vector<outer_type> x;
+		IFFT* owner;
+
+		ProductTree(const vector<outer_type>& _x, IFFT* that): x(_x), owner(that) {
+			n = 1;
+			while (n < (int)x.size()) {
+				n *= 2;
+			}
+			a.resize(n + n);
+			for (int i = 0; i < (int)x.size(); ++i) {
+				a[n + i] = {-x[i], 1};
+			}
+			for (int i = n - 1; i > 0; --i) {
+				if (a[2 * i].empty()) {
+					continue;
+				} else if (a[2 * i + 1].empty()) {
+					a[i] = a[2 * i];
+				} else {
+					a[i] = owner->multiply(a[2 * i], a[2 * i + 1]);
+				}
+			}
+		}
+
+		const Poly& top() {
+			return a[1];
+		}
+
+		void rec_multipoint(int v, int l, int r, Poly p, vector<outer_type>& ans) {
+			if (l >= (int)x.size()) {
 				return;
 			}
-			int m = (l + r) / 2;
-			push_prods(l, m);
-			const auto& p = seg_prods.back();
-			push_prods(m, r);
-			const auto& q = seg_prods.back();	// no reallocations because of reserve()
-			seg_prods.push_back(multiply(p, q));
-		};
-		push_prods(0, x.size());
-		vector<outer_type> ans(x.size());
-		auto fill_ans = [&](const auto& self, int l, int r, Poly p) {
-			p = divmod(p, seg_prods.back()).second;
-			seg_prods.pop_back();
+			p = owner->divmod(p, a[v]).second;
 			if (r <= l + 64) {
-				for (int i = l; i < r; ++i) {
-					outer_type& res = ans[i];
+				for (int i = l; i < r && i < (int)x.size(); ++i) {
+					outer_type& res = ans[i] = 0;
 					for (int j = (int)p.size() - 1; j >= 0; --j) {
 						res = res * x[i] + p[j];
 					}
 				}
-				for (int i = l; i < r - 1; ++i) {
-					seg_prods.pop_back();
-					seg_prods.pop_back();
-				}
 				return;
 			}
 			int m = (l + r) / 2;
-			self(self, m, r, p);
-			self(self, l, m, p);
+			rec_multipoint(v + v, l, m, p, ans);
+			rec_multipoint(v + v + 1, m, r, p, ans);
+		}
+
+		vector<outer_type> multipoint(const Poly& p) {
+			vector<outer_type> ans(x.size());
+			rec_multipoint(1, 0, n, p, ans);
+			return ans;
+		}
+	};
+
+	Poly multipoint(Poly p, const vector<outer_type>& x) {
+		ProductTree tree(x, this);
+		return multipoint(tree, p);
+	}
+
+	Poly interpolate(const vector<outer_type>& x, const vector<outer_type>& y) {
+		ProductTree tree(x, this);
+		auto denom = tree.multipoint(derivative(tree.top()));
+		auto inter = [&](const auto& self, int v, int l, int r) -> Poly {
+			if (l >= (int)x.size()) {
+				return {};
+			}
+			if (l + 1 == r) {
+				return {y[l] / denom[l]};
+			}
+			int m = (l + r) / 2;
+			auto left = self(self, v + v, l, m);
+			auto right = self(self, v + v + 1, m, r);
+			if (right.empty()) {
+				return left;
+			}
+			left = multiply(left, tree.a[v + v + 1]);
+			right = multiply(right, tree.a[v + v]);
+			if (left.size() < right.size()) {
+				left.resize(right.size());
+			}
+			for (int i = 0; i < (int)right.size(); ++i) {
+				left[i] += right[i];
+			}
+			return left;
 		};
-		fill_ans(fill_ans, 0, x.size(), p);
-		return ans;
+		return inter(inter, 1, 0, tree.n);
 	}
 
 protected:
