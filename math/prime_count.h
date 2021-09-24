@@ -1,5 +1,8 @@
 #pragma once
 
+#include "prime_count_cheat.h"
+#include "prime_count_mine.h"
+
 #include "sieve.h"
 #include "modular.h"
 #include "../base/util.h"
@@ -101,11 +104,6 @@ public:
 	}
 
 	T calc(long long i) {
-		// for (int i = 1; i < (int)dp.size(); ++i) {
-		// 	for (int j = 0; j < (int)dp[i].size(); ++j) {
-		// 		cerr << n / i << " " << primes[j] << ": " << dp[i][j] << "\n";
-		// 	}
-		// }
 		if (n / i < (int)prec.size()) {
 			return prec[n / i];
 		}
