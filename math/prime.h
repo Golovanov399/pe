@@ -246,13 +246,13 @@ vector<long long> factorize(long long n) {
 	return res;
 }
 
-vector<long long> get_divisors(long long n) {
-	auto fc = factorize(n);
+vector<long long> get_divisors(long long n, bool rho = true) {
+	auto fc = rho ? factorize_rho(n) : factorize(n);
 	sort(all(fc));
 	vector<long long> divs = {1ll};
 	int sz = divs.size();
-	int last = 0;
-	for (int p : fc) {
+	long long last = 0;
+	for (long long p : fc) {
 		if (p != last) {
 			sz = divs.size();
 		}
