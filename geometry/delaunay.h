@@ -1,6 +1,7 @@
 #pragma once
 
 #include "primitives/all.h"
+#include "../base/random.h"
 
 template <typename T>
 class Delaunay {

@@ -2,6 +2,7 @@
 
 #include "../base/base.h"
 #include "../base/istream.h"
+#include "../base/random.h"
 #include "../ds/skewheap.h"
 
 enum GraphType {

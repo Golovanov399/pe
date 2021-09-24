@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dinic.h"
+#include "../base/random.h"
 
 vector<int> dinic_matching(const vector<vector<int>>& ed) {
 	int m = 0;
