@@ -68,6 +68,10 @@ struct Point {
 		return cross(q);
 	}
 
+	Point operator -() const {
+		return {-x, -y};
+	}
+
 	friend T dot(const Point& p, const Point& q) {
 		return p.dot(q);
 	}
