@@ -9,7 +9,8 @@
 	}
 	long long y = pow(n, 0.36);
 	const int mx = n / y;
-	auto [erat, primes] = sieve(mx);
+	vector<int> erat, primes;
+	tie(erat, primes) = sieve(mx);
 	int pi_y = upper_bound(all(primes), y) - primes.begin();
 	long long ans = pi_y - 1;
 	{

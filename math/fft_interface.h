@@ -5,18 +5,20 @@
 template <typename outer_type, typename inner_type, int N>
 class IFFT {
 public:
+	using Poly = vector<outer_type>;
+
 	IFFT(): initialized_(false) {}
 
 	~IFFT() {}
 
-	virtual vector<outer_type> multiply(vector<outer_type> a, vector<outer_type> b) {
+	virtual Poly multiply(Poly a, Poly b) {
 		if ((int)a.size() > N / 2 || (int)b.size() > N / 2) {
-			vector<outer_type> result(a.size() + b.size() - 1);
+			Poly result(a.size() + b.size() - 1);
 			const int low_len = (max(a.size(), b.size()) + 1) / 2;
-			vector<outer_type> a_low(a.begin(), min(a.begin() + low_len, a.end()));
-			vector<outer_type> a_high(min(a.begin() + low_len, a.end()), a.end());
-			vector<outer_type> b_low(b.begin(), min(b.begin() + low_len, b.end()));
-			vector<outer_type> b_high(min(b.begin() + low_len, b.end()), b.end());
+			Poly a_low(a.begin(), min(a.begin() + low_len, a.end()));
+			Poly a_high(min(a.begin() + low_len, a.end()), a.end());
+			Poly b_low(b.begin(), min(b.begin() + low_len, b.end()));
+			Poly b_high(min(b.begin() + low_len, b.end()), b.end());
 
 			auto tmp = multiply(a_low, b_low);
 			for (int i = 0; i < (int)tmp.size(); ++i) {
@@ -44,9 +46,6 @@ public:
 			}
 			return result;
 		}
-		if (!initialized_) {
-			initialize();
-		}
 		int n = 1;
 		while (n < (int)a.size() || n < (int)b.size()) {
 			n *= 2;
@@ -64,7 +63,7 @@ public:
 			ar[i] *= br[i];
 		}
 		ifft(ar);
-		vector<outer_type> res((int)a.size() + (int)b.size() - 1);
+		Poly res((int)a.size() + (int)b.size() - 1);
 		assert(res.size() <= ar.size());
 		if constexpr (is_convertible_v<inner_type, outer_type>) {
 			copy_n(ar.begin(), res.size(), res.begin());
@@ -74,16 +73,42 @@ public:
 		return res;
 	}
 
-	vector<outer_type> inverse(const vector<outer_type>& a, int prec) {
+	virtual Poly square(const Poly& a) {
+		int n = 1;
+		while (n < (int)a.size()) {
+			n *= 2;
+		}
+		vector<inner_type> ar(n + n);
+		if constexpr (is_convertible_v<outer_type, inner_type>) {
+			copy(all(a), ar.begin());
+		} else {
+			throw runtime_error("please, implement your own child square function");
+		}
+		fft(ar);
+		for (int i = 0; i < (int)ar.size(); ++i) {
+			ar[i] *= ar[i];
+		}
+		ifft(ar);
+		Poly res((int)a.size() + (int)a.size() - 1);
+		assert(res.size() <= ar.size());
+		if constexpr (is_convertible_v<inner_type, outer_type>) {
+			copy_n(ar.begin(), res.size(), res.begin());
+		} else {
+			throw runtime_error("please, implement your own child square function");
+		}
+		return res;
+	}
+
+	Poly inverse(const Poly& a, int prec) {
 		assert(!a.empty());
 		assert(a[0] != 0);
-		vector<outer_type> b = {1 / a[0]};
+		Poly b = {1 / a[0]};
 		for (int len = 1; len < prec; len *= 2) {
 			auto tmp = multiply(b, b);
 			if ((int)tmp.size() > prec) {
 				tmp.resize(prec);
 			}
-			tmp = multiply(tmp, vector<outer_type>{a.begin(), a.begin() + min(2 * len, (int)a.size())});
+			tmp = multiply(tmp, Poly{a.begin(), a.begin() + min(2 * len, (int)a.size())});
 			tmp.resize(2 * len);
 			for (int i = 0; i < len; ++i) {
 				tmp[i] = 2 * b[i] - tmp[i];
@@ -95,7 +120,7 @@ public:
 		return b;
 	}
 
-	vector<outer_type> derivative(vector<outer_type> a) {
+	Poly derivative(Poly a) {
 		if (a.empty()) {
 			return a;
 		}
@@ -106,7 +131,7 @@ public:
 		return a;
 	}
 
-	vector<outer_type> primitive(vector<outer_type> a) {
+	Poly primitive(Poly a) {
 		a.insert(a.begin(), 0);
 		for (int i = 1; i < (int)a.size(); ++i) {
 			a[i] /= i;
@@ -114,7 +139,7 @@ public:
 		return a;
 	}
 
-	vector<outer_type> log(const vector<outer_type>& a, int prec) {
+	Poly log(const Poly& a, int prec) {
 		assert(!a.empty());
 		assert(a[0] == 1);
 		auto res = primitive(multiply(derivative(a), inverse(a, prec)));
@@ -122,12 +147,12 @@ public:
 		return res;
 	}
 
-	vector<outer_type> exp(const vector<outer_type>& a, int prec) {
+	Poly exp(const Poly& a, int prec) {
 		assert(!a.empty());
 		assert(a[0] == 0);
-		vector<outer_type> b = {1};
+		Poly b = {1};
 		for (int len = 1; len < prec; len *= 2) {
-			auto tmp = vector<outer_type>{a.begin(), a.begin() + min(2 * len, (int)a.size())};
+			auto tmp = Poly{a.begin(), a.begin() + min(2 * len, (int)a.size())};
 			tmp.resize(2 * len);
 			tmp[0] += 1;
 			auto l = log(b, 2 * len);
@@ -141,7 +166,7 @@ public:
 		return b;
 	}
 
-	pair<vector<outer_type>, vector<outer_type>> divmod(vector<outer_type> a, vector<outer_type> b) {
+	pair<Poly, Poly> divmod(Poly a, Poly b) {
 		assert(!b.empty());
 		assert(b.back() != 0);
 		if (a.size() < b.size()) {
@@ -155,12 +180,102 @@ public:
 		reverse(all(q));
 		reverse(all(a));
 		reverse(all(b));
-		vector<outer_type> r(b.size());
+		Poly r(b.size() - 1);
 		auto bq = multiply(b, q);
 		for (int i = 0; i < (int)r.size(); ++i) {
 			r[i] = a[i] - bq[i];
 		}
 		return {q, r};
+	}
+
+	struct ProductTree {
+		int n;
+		vector<Poly> a;
+		vector<outer_type> x;
+		IFFT* owner;
+
+		ProductTree(const vector<outer_type>& _x, IFFT* that): x(_x), owner(that) {
+			n = 1;
+			while (n < (int)x.size()) {
+				n *= 2;
+			}
+			a.resize(n + n);
+			for (int i = 0; i < (int)x.size(); ++i) {
+				a[n + i] = {-x[i], 1};
+			}
+			for (int i = n - 1; i > 0; --i) {
+				if (a[2 * i].empty()) {
+					continue;
+				} else if (a[2 * i + 1].empty()) {
+					a[i] = a[2 * i];
+				} else {
+					a[i] = owner->multiply(a[2 * i], a[2 * i + 1]);
+				}
+			}
+		}
+
+		const Poly& top() {
+			return a[1];
+		}
+
+		void rec_multipoint(int v, int l, int r, Poly p, vector<outer_type>& ans) {
+			if (l >= (int)x.size()) {
+				return;
+			}
+			p = owner->divmod(p, a[v]).second;
+			if (r <= l + 64) {
+				for (int i = l; i < r && i < (int)x.size(); ++i) {
+					outer_type& res = ans[i] = 0;
+					for (int j = (int)p.size() - 1; j >= 0; --j) {
+						res = res * x[i] + p[j];
+					}
+				}
+				return;
+			}
+			int m = (l + r) / 2;
+			rec_multipoint(v + v, l, m, p, ans);
+			rec_multipoint(v + v + 1, m, r, p, ans);
+		}
+
+		vector<outer_type> multipoint(const Poly& p) {
+			vector<outer_type> ans(x.size());
+			rec_multipoint(1, 0, n, p, ans);
+			return ans;
+		}
+	};
+
+	Poly multipoint(Poly p, const vector<outer_type>& x) {
+		ProductTree tree(x, this);
+		return multipoint(tree, p);
+	}
+
+	Poly interpolate(const vector<outer_type>& x, const vector<outer_type>& y) {
+		ProductTree tree(x, this);
+		auto denom = tree.multipoint(derivative(tree.top()));
+		auto inter = [&](const auto& self, int v, int l, int r) -> Poly {
+			if (l >= (int)x.size()) {
+				return {};
+			}
+			if (l + 1 == r) {
+				return {y[l] / denom[l]};
+			}
+			int m = (l + r) / 2;
+			auto left = self(self, v + v, l, m);
+			auto right = self(self, v + v + 1, m, r);
+			if (right.empty()) {
+				return left;
+			}
+			left = multiply(left, tree.a[v + v + 1]);
+			right = multiply(right, tree.a[v + v]);
+			if (left.size() < right.size()) {
+				left.resize(right.size());
+			}
+			for (int i = 0; i < (int)right.size(); ++i) {
+				left[i] += right[i];
+			}
+			return left;
+		};
+		return inter(inter, 1, 0, tree.n);
 	}
 
 protected:
@@ -187,7 +302,10 @@ protected:
 		}
 	}
 
-	void butterfly(vector<inner_type>& a) const {
+	void butterfly(vector<inner_type>& a) {
+		if (!initialized_) {
+			initialize();
+		}
 		const int n = a.size();
 		assert(!(n & (n - 1)));
 		const int l = __builtin_ctz(n);
@@ -204,7 +322,11 @@ protected:
 		return bitrev[num] >> (L - len);
 	}
 
-	virtual void fft(vector<inner_type>& a) const {
+	virtual void fft(vector<inner_type>& a) {
+		if (!initialized_) {
+			initialize();
+		}
+
 		const int n = a.size();
 		assert(!(n & (n - 1)));
 		butterfly(a);
@@ -221,7 +343,7 @@ protected:
 		}
 	}
 
-	void ifft(vector<inner_type>& a) const {
+	void ifft(vector<inner_type>& a) {
 		fft(a);
 		for (auto& x : a) {
 			x /= a.size();
