@@ -1,41 +1,47 @@
 #pragma once
 
-template <uint32_t mod>
+#include "../base/base.h"
+
+template <uint32_t base>
 struct Montgomery {
 	using i32 = int32_t;
 	using u32 = uint32_t;
 	using u64 = uint64_t;
 
+	static constexpr u32 mod() {
+		return base;
+	}
+
 	static constexpr u32 np = []() {
-		u32 x = mod;
+		u32 x = base;
 		for (int i = 0; i < 4; ++i) {
-			x *= 2u - mod * x;
+			x *= 2u - base * x;
 		}
 		return -x;
 	}();
-	static constexpr u32 r2 = -(u64)(mod) % mod;
+	static constexpr u32 r2 = -(u64)(base) % base;
 
-	static_assert(mod < (1u << 30));
-	static_assert(mod * np + 1 == 0);
+	static_assert(base < (1u << 30));
+	static_assert(base * np + 1 == 0);
 
 	static u32 reduce(u64 x) {
-		return (x + (u64)((u32)x * np) * mod) >> 32;
+		return (x + (u64)((u32)x * np) * base) >> 32;
 	}
 
 	u32 x;
 	Montgomery(): x(0) {}
-	constexpr Montgomery(long long y): x(y ? reduce((u64)(y % mod + mod) * r2) : 0) {}
+	constexpr Montgomery(long long y): x(y ? reduce((u64)(y % base + base) * r2) : 0) {}
 
 	Montgomery& operator +=(const Montgomery& ot) {
-		if ((i32)(x += ot.x - 2 * mod) < 0) {
-			x += 2 * mod;
+		if ((i32)(x += ot.x - 2 * base) < 0) {
+			x += 2 * base;
 		}
 		return *this;
 	}
 
 	Montgomery& operator -=(const Montgomery& ot) {
 		if ((i32)(x -= ot.x) < 0) {
-			x += 2 * mod;
+			x += 2 * base;
 		}
 		return *this;
 	}
@@ -75,11 +81,15 @@ struct Montgomery {
 
 	u32 get() const {
 		u32 res = reduce(x);
-		return res < mod ? res : res - mod;
+		return res < base ? res : res - base;
+	}
+
+	u32 operator ()() const {
+		return get();
 	}
 
 	Montgomery inverse() const {
-		return pow(mod - 2);
+		return pow(base - 2);
 	}
 
 	Montgomery pow(int64_t p) const {
@@ -110,11 +120,11 @@ struct Montgomery {
 	}
 
 	bool operator ==(const Montgomery& ot) const {
-		return (x >= mod ? x - mod : x) == (ot.x >= mod ? ot.x - mod : ot.x);
+		return (x >= base ? x - base : x) == (ot.x >= base ? ot.x - base : ot.x);
 	}
 
 	bool operator !=(const Montgomery& ot) const {
-		return (x >= mod ? x - mod : x) != (ot.x >= mod ? ot.x - mod : ot.x);
+		return (x >= base ? x - base : x) != (ot.x >= base ? ot.x - base : ot.x);
 	}
 
 	explicit operator int64_t() const {

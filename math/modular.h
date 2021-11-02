@@ -116,6 +116,10 @@ struct TypeModular {
 		return _inv(val, mod());
 	}
 
+	int operator ()() const {
+		return val;
+	}
+
 	int _inv(int a, int b) const {
 		return a == 1 ? a : b - 1ll * _inv(b % a, a) * b / a % b;
 	}

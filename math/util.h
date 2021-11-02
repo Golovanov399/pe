@@ -1,10 +1,10 @@
 #pragma once
 
-#include "modular.h"
+#include "montgomery.h"
 
 template <int mod>
 struct InvfactStuff {
-	using Mint = Modular<mod>;
+	using Mint = Montgomery<mod>;
 
 	int n;
 	vector<Mint> inv, fact, invfact;
