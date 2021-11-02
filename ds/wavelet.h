@@ -50,7 +50,7 @@ struct WaveletLayer {
 	}
 
 	template <typename T>
-	int count_under(int& l, int& r, int& x, T bit) const {
+	int count_under(int& l, int& r, T& x, T bit) const {
 		if (x < bit) {
 			l = lower_bound(0, l);
 			r = lower_bound(0, r);
