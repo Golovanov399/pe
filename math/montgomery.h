@@ -24,7 +24,7 @@ struct Montgomery {
 
 	u32 x;
 	Montgomery(): x(0) {}
-	Montgomery(long long y): x(reduce((u64)(y % mod + mod) * r2)) {}
+	constexpr Montgomery(long long y): x(y ? reduce((u64)(y % mod + mod) * r2) : 0) {}
 
 	Montgomery& operator +=(const Montgomery& ot) {
 		if ((i32)(x += ot.x - 2 * mod) < 0) {
@@ -49,28 +49,24 @@ struct Montgomery {
 		return *this *= ot.inverse();
 	}
 
-	Montgomery operator +(const Montgomery& ot) const {
-		Montgomery res = *this;
-		res += ot;
-		return res;
+	friend Montgomery operator +(Montgomery a, const Montgomery& b) {
+		a += b;
+		return a;
 	}
 
-	Montgomery operator -(const Montgomery& ot) const {
-		Montgomery res = *this;
-		res -= ot;
-		return res;
+	friend Montgomery operator -(Montgomery a, const Montgomery& b) {
+		a -= b;
+		return a;
 	}
 
-	Montgomery operator *(const Montgomery& ot) const {
-		Montgomery res = *this;
-		res *= ot;
-		return res;
+	friend Montgomery operator *(Montgomery a, const Montgomery& b) {
+		a *= b;
+		return a;
 	}
 
-	Montgomery operator /(const Montgomery& ot) const {
-		Montgomery res = *this;
-		res /= ot;
-		return res;
+	friend Montgomery operator /(Montgomery a, const Montgomery& b) {
+		a /= b;
+		return a;
 	}
 
 	Montgomery operator -() const {
@@ -111,6 +107,14 @@ struct Montgomery {
 
 	friend ostream& operator <<(ostream& ostr, const Montgomery& m) {
 		return ostr << m.get();
+	}
+
+	bool operator ==(const Montgomery& ot) const {
+		return (x >= mod ? x - mod : x) == (ot.x >= mod ? ot.x - mod : ot.x);
+	}
+
+	bool operator !=(const Montgomery& ot) const {
+		return (x >= mod ? x - mod : x) != (ot.x >= mod ? ot.x - mod : ot.x);
 	}
 
 	explicit operator int64_t() const {

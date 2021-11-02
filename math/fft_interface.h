@@ -111,7 +111,7 @@ public:
 			tmp = multiply(tmp, Poly{a.begin(), a.begin() + min(2 * len, (int)a.size())});
 			tmp.resize(2 * len);
 			for (int i = 0; i < len; ++i) {
-				tmp[i] = 2 * b[i] - tmp[i];
+				tmp[i] = b[i] + b[i] - tmp[i];
 				tmp[len + i] = -tmp[len + i];
 			}
 			b.swap(tmp);
@@ -200,8 +200,9 @@ public:
 				n *= 2;
 			}
 			a.resize(n + n);
+			outer_type one{1};
 			for (int i = 0; i < (int)x.size(); ++i) {
-				a[n + i] = {-x[i], 1};
+				a[n + i] = {-x[i], one};
 			}
 			for (int i = n - 1; i > 0; --i) {
 				if (a[2 * i].empty()) {
@@ -345,8 +346,9 @@ protected:
 
 	void ifft(vector<inner_type>& a) {
 		fft(a);
+		outer_type to_div = outer_type(1) / a.size();
 		for (auto& x : a) {
-			x /= a.size();
+			x *= to_div;
 		}
 		reverse(1 + all(a));
 	}

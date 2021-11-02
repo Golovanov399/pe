@@ -2,11 +2,12 @@
 
 #include "../base/base.h"
 #include "fft_interface.h"
-#include "modular.h"
+// #include "modular.h"
+#include "montgomery.h"
 
 template <int mod, int N = (1 << __builtin_ctz(mod - 1))>
-class NTT : public IFFT<Modular<mod>, Modular<mod>, N> {
-	using Mint = Modular<mod>;
+class NTT : public IFFT<Montgomery<mod>, Montgomery<mod>, N> {
+	using Mint = Montgomery<mod>;
 protected:
 	void fill_angles() {
 		vector<int> primes;
@@ -34,7 +35,7 @@ protected:
 		while (!isPrimitiveRoot(g)) {
 			++g;
 		}
-		g = Mint(g).pow(mod / N).val;
+		g = Mint(g).pow(mod / N).get();
 
 		this->angles.assign(N, 1);
 		for (int i = 1; i < N; ++i) {
