@@ -195,6 +195,65 @@ struct Matrix {
 			return nullopt;
 		}
 	}
+
+	static constexpr vector<T> characteristic(vector<vector<T>> a) {
+		const int n = a.size();
+		for (int i = 0; i < n - 1; ++i) {
+			int j = i + 1;
+			while (j < n && a[j][i] == 0) {
+				++j;
+			}
+			if (j == n) {
+				continue;
+			}
+			if (j > i + 1) {
+				a[j].swap(a[i + 1]);
+				for (int k = 0; k < n; ++k) {
+					swap(a[k][j], a[k][i + 1]);
+				}
+			}
+			T c = 1 / a[i + 1][i];
+			for (int j = i + 2; j < n; ++j) {
+				if (a[j][i] != 0) {
+					T coef = c * a[j][i];
+					for (int k = i; k < n; ++k) {
+						a[j][k] -= a[i + 1][k] * coef;
+					}
+					for (int k = 0; k < n; ++k) {
+						a[k][i + 1] += a[k][j] * coef;
+					}
+				}
+			}
+		}
+		auto mult = [&](const vector<T>& a, const vector<T>& b) {
+			vector<T> res(a.size() + b.size() - 1);
+			for (int i = 0; i < (int)a.size(); ++i) {
+				for (int j = 0; j < (int)b.size(); ++j) {
+					res[i + j] += a[i] * b[j];
+				}
+			}
+			return res;
+		};
+		vector<vector<T>> dp(n + 1);
+		dp[0] = {1};
+		for (int i = 0; i < n; ++i) {
+			dp[i + 1] = mult(dp[i], {a[i][i], -1});
+			T cur = 1;
+			for (int j = i - 1; j >= 0; --j) {
+				cur *= a[j + 1][j];
+				int sign = (i % 2 == j % 2) ? 1 : -1;
+				T coef = cur * a[j][i] * sign;
+				for (int k = 0; k < (int)dp[j].size(); ++k) {
+					dp[i + 1][k] += dp[j][k] * coef;
+				}
+			}
+		}
+		return dp[n];
+	}
+
+	vector<T> characteristic() const {
+		return characteristic(a);
+	}
 };
 
 template <typename T>
