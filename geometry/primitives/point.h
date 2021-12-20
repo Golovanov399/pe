@@ -116,21 +116,21 @@ struct Point {
 		return {-y, x};
 	}
 
-	Point<T> rotated(ld phi) const {
+	Point<T> rotated(T phi) const {
 		static_assert(!is_integral_v<T>);
-		ld cs = cos(phi), sn = sin(phi);
+		T cs = cos(phi), sn = sin(phi);
 		return {x * cs - y * sn, x * sn + y * cs};
 	}
 
-	void rotate(ld phi) {
+	void rotate(T phi) {
 		*this = rotated(phi);
 	}
 
-	Point<T> rotated_via_trig(ld cs, ld sn) const {
+	Point<T> rotated_via_trig(T cs, T sn) const {
 		return {x * cs - y * sn, x * sn + y * cs};
 	}
 
-	void rotate_via_trig(ld cs, ld sn) {
+	void rotate_via_trig(T cs, T sn) {
 		*this = rotated_via_trig(cs, sn);
 	}
 
