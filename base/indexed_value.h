@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 template <typename T>
 struct IndexedValue {
 	int index;

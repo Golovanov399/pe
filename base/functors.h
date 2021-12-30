@@ -1,7 +1,5 @@
 #pragma once
 
-#include "base.h"
-
 #define CREATE_FUNCTOR(name, expr) \
 template <typename T>\
 struct name {\

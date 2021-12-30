@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.h"
+#include <functional>
 
 template <class Fun>
 class y_combinator_result {

@@ -1,6 +1,10 @@
 #pragma once
 
-#include "base.h"
+#include <ostream>
+#include <sstream>
+#include <vector>
+
+using std::ostream, std::vector, std::cerr;
 
 enum PrintModifier : int {
 	Reset = 0,
@@ -41,7 +45,7 @@ namespace Emphasize {
 using namespace Emphasize;
 
 struct debug {
-	ostringstream ss;
+	std::ostringstream ss;
 
 	debug() {}
 	explicit debug(PrintModifier pm) {

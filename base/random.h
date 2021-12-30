@@ -2,6 +2,9 @@
 
 #include <random>
 
+using std::mt19937, std::mt19937_64;
+using std::shuffle;
+
 mt19937 rr;
 mt19937_64 rr64;
 

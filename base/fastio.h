@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.h"
+#include <cstring>
 
 // taken from https://github.com/NyaanNyaan/library/blob/master/misc/fastio.hpp
 namespace fastio {
@@ -50,7 +50,7 @@ inline void read(T& x) {
 	do c = ibuf[pil++];
 	while (c < '-');
 	[[maybe_unused]] bool minus = false;
-	if constexpr (is_signed<T>::value == true) {
+	if constexpr (std::is_signed<T>::value == true) {
 		if (c == '-') minus = true, c = ibuf[pil++];
 	}
 	x = 0;
@@ -58,7 +58,7 @@ inline void read(T& x) {
 		x = x * 10 + (c & 15);
 		c = ibuf[pil++];
 	}
-	if constexpr (is_signed<T>::value == true) {
+	if constexpr (std::is_signed<T>::value == true) {
 		if (minus) x = -x;
 	}
 }
@@ -88,7 +88,7 @@ inline void write(T x) {
 		obuf[por++] = '0';
 		return;
 	}
-	if constexpr (is_signed<T>::value == true) {
+	if constexpr (std::is_signed<T>::value == true) {
 		if (x < 0) obuf[por++] = '-', x = -x;
 	}
 	int i = 12;

@@ -1,6 +1,18 @@
 #pragma once
 
+#include <array>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <set>
+#include <tuple>
+#include <utility>
+#include <vector>
 #include "traits.h"
+
+using std::ostream, std::cout;
+using std::make_tuple;
 
 ostream& operator <<(ostream& ostr, LI x) {
 	static constexpr li BIG = 1e18;
@@ -11,19 +23,19 @@ ostream& operator <<(ostream& ostr, LI x) {
 	if (x < BIG) {
 		return ostr << (li)x;
 	} else if (x / BIG >= BIG) {
-		stringstream ss;
-		ss << setfill('0') << setw(18) << (li)(x / BIG % BIG);
-		ss << setfill('0') << setw(18) << (li)(x % BIG);
+		std::stringstream ss;
+		ss << std::setfill('0') << std::setw(18) << (li)(x / BIG % BIG);
+		ss << std::setfill('0') << std::setw(18) << (li)(x % BIG);
 		return ostr << (li)(x / BIG / BIG) << ss.str();
 	} else {
-		stringstream ss;
-		ss << setfill('0') << setw(18) << (li)(x % BIG);
+		std::stringstream ss;
+		ss << std::setfill('0') << std::setw(18) << (li)(x % BIG);
 		return ostr << (li)(x / BIG) << ss.str();
 	}
 }
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const vector<T>& vec) {
+ostream& operator <<(ostream& ostr, const std::vector<T>& vec) {
 	auto [pre, sep, post] = (&ostr == &cout) ? make_tuple("", " ", "") : make_tuple("[", ", ", "]");
 	ostr << pre;
 	bool fp = true;
@@ -39,7 +51,7 @@ ostream& operator <<(ostream& ostr, const vector<T>& vec) {
 }
 
 template <typename T, size_t N>
-ostream& operator <<(ostream& ostr, const array<T, N>& vec) {
+ostream& operator <<(ostream& ostr, const std::array<T, N>& vec) {
 	auto [pre, sep, post] = (&ostr == &cout) ? make_tuple("", " ", "") : make_tuple("[", ", ", "]");
 	ostr << pre;
 	bool fp = true;
@@ -55,7 +67,7 @@ ostream& operator <<(ostream& ostr, const array<T, N>& vec) {
 }
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const set<T>& st) {
+ostream& operator <<(ostream& ostr, const std::set<T>& st) {
 	auto [pre, sep, post] = (&ostr == &cout) ? make_tuple("", " ", "") : make_tuple("{", ", ", "}");
 	ostr << pre;
 	bool fp = true;
@@ -71,7 +83,7 @@ ostream& operator <<(ostream& ostr, const set<T>& st) {
 }
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const multiset<T>& st) {
+ostream& operator <<(ostream& ostr, const std::multiset<T>& st) {
 	auto [pre, sep, post] = (&ostr == &cout) ? make_tuple("", " ", "") : make_tuple("{", ", ", "}");
 	ostr << pre;
 	bool fp = true;
@@ -87,7 +99,7 @@ ostream& operator <<(ostream& ostr, const multiset<T>& st) {
 }
 
 template <typename T, typename U>
-ostream& operator <<(ostream& ostr, const map<T, U>& mp) {
+ostream& operator <<(ostream& ostr, const std::map<T, U>& mp) {
 	ostr << "{";
 	bool fp = true;
 	for (const auto& [k, v] : mp) {
@@ -102,7 +114,7 @@ ostream& operator <<(ostream& ostr, const map<T, U>& mp) {
 }
 
 template <typename T, typename U>
-ostream& operator <<(ostream& ostr, const pair<T, U>& p) {
+ostream& operator <<(ostream& ostr, const std::pair<T, U>& p) {
 	return ostr << "(" << p.first << ", " << p.second << ")";
 }
 

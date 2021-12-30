@@ -1,9 +1,13 @@
 #pragma once
 
-#include "base.h"
+#include <iostream>
+#include <vector>
+#include <utility>
+
+using std::istream;
 
 template <typename T>
-istream& operator >>(istream& istr, vector<T>& vec) {
+istream& operator >>(istream& istr, std::vector<T>& vec) {
 	for (auto& x : vec) {
 		istr >> x;
 	}
@@ -11,12 +15,12 @@ istream& operator >>(istream& istr, vector<T>& vec) {
 }
 
 template <typename T, typename U>
-istream& operator >>(istream& istr, pair<T, U>& pr) {
+istream& operator >>(istream& istr, std::pair<T, U>& pr) {
 	return istr >> pr.first >> pr.second;
 }
 
 template <typename T = int>
-T nxt(istream& istr = cin) {
+T nxt(istream& istr = std::cin) {
 	T x;
 	istr >> x;
 	return x;
