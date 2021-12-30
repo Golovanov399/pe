@@ -1,7 +1,14 @@
 #pragma once
 
+#include <algorithm>
+#include <numeric>
+#include <string>
+#include <utility>
+#include <vector>
 #include "../ds/sparse.h"
 #include "../ds/multilist.h"
+
+using std::string, std::vector, std::sort, std::min, std::max;
 
 class SuffixArray {
 public:
@@ -11,7 +18,7 @@ public:
 			cur[i] = s[i];
 		}
 		suffix_order.resize(n);
-		iota(all(suffix_order), 0);
+		std::iota(all(suffix_order), 0);
 		sort(all(suffix_order), [&](int i, int j) {
 			return cur[i] < cur[j];
 		});

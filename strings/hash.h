@@ -1,6 +1,11 @@
 #pragma once
 
-#include "../base/base.h"
+#include <array>
+#include <string>
+#include <utility>
+#include <vector>
+
+using std::array, std::vector, std::pair, std::string;
 
 template <int N>
 struct Hasher {

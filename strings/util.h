@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../base/base.h"
+#include <string>
+#include <utility>
+#include <vector>
+
+using std::vector, std::string, std::min;
 
 vector<int> z_function(const string& s) {
 	const int n = s.size();

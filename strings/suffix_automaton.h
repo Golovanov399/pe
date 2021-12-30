@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../base/base.h"
+#include <array>
+#include <string>
+#include <vector>
+
+using std::array, std::string, std::vector;
 
 template <size_t alphabet_size = 26>
 class SuffixAutomaton {
