@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+#include <utility>
+
+using std::vector, std::swap;
 
 template <typename T>
 struct SkewHeap {

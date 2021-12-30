@@ -1,8 +1,13 @@
 #pragma once
 
-#include "../base/base.h"
+#include <algorithm>
+#include <cassert>
+#include <functional>
+#include <vector>
 #include "../base/random.h"
 #include "../base/memory.h"
+
+using std::vector, std::swap, std::function;
 
 template <typename T, typename MemMgr = DefaultMemoryManager>
 struct Treap {

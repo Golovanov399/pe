@@ -1,6 +1,12 @@
 #pragma once
 
-#include "../base/base.h"
+#include <array>
+#include <cassert>
+#include <numeric>
+#include <vector>
+#include "../base/defines.h"
+
+using std::vector, std::array;
 
 struct WaveletLayer {
 	vector<int> idx;

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+
+using std::vector;
 
 /*
 	Node struct must have:

@@ -1,6 +1,11 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cassert>
+#include <iterator>
+#include <vector>
+#include "../base/defines.h"
+
+using std::vector, std::iterator, std::forward_iterator_tag;
 
 template <typename T>
 class Multilist {

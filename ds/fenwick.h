@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+
+using std::vector;
 
 template <typename V = int>
 struct Fenwick {

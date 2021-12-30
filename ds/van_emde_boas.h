@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../base/base.h"
+#include <algorithm>
+#include <array>
+#include <type_traits>
+
+using std::array, std::min, std::max;
 
 template <int L, class D = void>
 struct VanEmdeBoasNode {
@@ -109,7 +113,7 @@ struct VanEmdeBoasNode {
 
 
 template <int L>
-struct VanEmdeBoasNode<L, typename enable_if<L == 1>::type> {
+struct VanEmdeBoasNode<L, typename std::enable_if<L == 1>::type> {
 	unsigned long long keys;
 
 	VanEmdeBoasNode(): keys(0) {}

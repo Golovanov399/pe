@@ -1,6 +1,10 @@
 #pragma once
 
+#include <cassert>
+#include <vector>
 #include "../base/functors.h"
+
+using std::vector;
 
 template <typename T, class Op = Min<T>>
 struct Sparse {

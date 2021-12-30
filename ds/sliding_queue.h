@@ -10,7 +10,7 @@ template <typename T, typename Func>
 struct SlidingQueue {
 	vector<T> head, tail;
 	vector<T> fhead, ftail;
-	static Func func;
+	Func func;
 
 	size_t size() const {
 		return head.size() + tail.size();

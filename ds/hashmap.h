@@ -1,6 +1,12 @@
 #pragma once
 
+#include <cassert>
+#include <cstddef>
+#include <utility>
+#include <vector>
 #include "../base/traits.h"
+
+using std::vector, std::pair;
 
 template <typename K>
 struct basic_hasher {

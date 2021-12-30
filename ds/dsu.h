@@ -1,13 +1,17 @@
 #pragma once
 
-#include "../base/base.h"
+#include <numeric>
+#include <algorithm>
+#include <vector>
+
+using std::vector, std::swap;
 
 struct Dsu {
 	int n;
 	vector<int> p, rk;
 
 	Dsu(int _n): n(_n), p(_n), rk(_n) {
-		iota(p.begin(), p.end(), 0);
+		std::iota(p.begin(), p.end(), 0);
 	}
 
 	int get(int v) {
