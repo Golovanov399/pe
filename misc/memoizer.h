@@ -1,6 +1,11 @@
 #pragma once
 
-#include "../base/base.h"
+#include <map>
+#include <vector>
+#include <type_traits>
+
+using std::map, std::unordered_map, std::vector;
+using std::is_same_v, std::is_integral_v, std::decay_t;
 
 template <typename S, typename T, typename Container, typename Fun>
 class GenericMemoizerResult {
@@ -43,7 +48,7 @@ public:
 	static_assert(is_integral_v<S>);
 
 	T operator ()(S x) {
-		if (x < small_cache.size()) {
+		if (x < static_cast<S>(small_cache.size())) {
 			if (calculated[x]) {
 				return small_cache[x];
 			}
@@ -58,7 +63,7 @@ public:
 			}
 		}
 		auto res = f(ref(*this), x);
-		if (x < small_cache.size()) {
+		if (x < static_cast<S>(small_cache.size())) {
 			calculated[x] = true;
 			small_cache[x] = res;
 			return res;
