@@ -1,6 +1,11 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+#include <queue>
+#include <limits>
+#include <algorithm>
+
+using std::vector, std::queue;
 
 template <typename int_type = int>
 class Dinic {
@@ -45,7 +50,7 @@ public:
 private:
 	vector<int> d;
 	vector<int> ptr;
-	static inline constexpr int_type inf = numeric_limits<int_type>::max();
+	static inline constexpr int_type inf = std::numeric_limits<int_type>::max();
 
 	int_type push_flow(int s, int t, int_type flow_limit) {
 		if (!flow_limit) {
@@ -60,7 +65,7 @@ private:
 			if (d[edges[eid].to] != d[s] + 1 || edges[eid].flow == edges[eid].cap) {
 				continue;
 			}
-			int_type added_flow = push_flow(edges[eid].to, t, min(edges[eid].cap - edges[eid].flow, flow_limit));
+			int_type added_flow = push_flow(edges[eid].to, t, std::min(edges[eid].cap - edges[eid].flow, flow_limit));
 			if (!added_flow) {
 				continue;
 			}

@@ -1,13 +1,16 @@
 #pragma once
 
+#include <functional>
+
 #include "dinic.h"
 #include "../base/random.h"
+#include "../base/defines.h"
 
 vector<int> dinic_matching(const vector<vector<int>>& ed) {
 	int m = 0;
 	for (const auto& v : ed) {
 		if (!v.empty()) {
-			m = max(m, *max_element(all(v)) + 1);
+			m = std::max(m, *max_element(all(v)) + 1);
 		}
 	}
 	const int n = ed.size();
@@ -35,7 +38,7 @@ vector<int> kuhn_matching(const vector<vector<int>>& ed) {
 	int m = 0;
 	for (const auto& v : ed) {
 		if (!v.empty()) {
-			m = max(m, *max_element(all(v)) + 1);
+			m = std::max(m, *max_element(all(v)) + 1);
 		}
 	}
 	const int n = ed.size();
@@ -59,7 +62,7 @@ vector<int> kuhn_matching(const vector<vector<int>>& ed) {
 		}
 	}
 
-	function<bool(int)> dfs = [&](int v) {
+	std::function<bool(int)> dfs = [&](int v) {
 		if (used[v] == timer) {
 			return false;
 		}
@@ -97,7 +100,7 @@ vector<int> kuhn_matching(const vector<vector<int>>& ed) {
 template <typename int_type>
 vector<int> hungarian(const vector<vector<int_type>>& a) {
 	const int n = a.size();
-	constexpr int_type inf = numeric_limits<int_type>::max();
+	constexpr int_type inf = std::numeric_limits<int_type>::max();
 
 	vector<int_type> u(n + 1), v(n + 1);
 	vector<int_type> est(n + 1, inf);
