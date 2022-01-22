@@ -1,9 +1,24 @@
 #pragma once
 
-#include "../base/base.h"
+#include <functional>
+#include <algorithm>
+#include <utility>
+#include <cassert>
+#include <numeric>
+#include <queue>
+#include <optional>
+#include <set>
+#include <stdexcept>
+
 #include "../base/istream.h"
+#include "../base/defines.h"
 #include "../base/random.h"
 #include "../ds/skewheap.h"
+
+using std::function, std::numeric_limits, std::optional;
+using std::min, std::max, std::iota, std::greater;
+using std::pair, std::queue, std::priority_queue, std::set;
+using std::logic_error;
 
 enum GraphType {
 	Undirected,

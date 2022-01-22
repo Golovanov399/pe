@@ -1,11 +1,23 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+#include <numeric>
+#include <algorithm>
+
 #include "../base/istream.h"
+#include "../base/defines.h"
+
+using std::vector;
+using std::iota, std::swap;
 
 class Tree {
 public:
 	explicit Tree(int _n): n(_n), g(_n) {}
+
+	void add_edge(int u, int v) {
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
 
 	void read_edges(int start_index = 1) {
 		for (int i = 0; i < n - 1; ++i) {
