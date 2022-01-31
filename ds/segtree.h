@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <utility>
 
 using std::vector;
 
@@ -63,7 +64,7 @@ public:
 			}
 		}
 		pos += n;
-		a[pos].update(forward<Args>(args)...);
+		a[pos].update(std::forward<Args>(args)...);
 		while (pos > 1) {
 			pos /= 2;
 			a[pos] = merge(a[pos * 2], a[pos * 2 + 1]);
@@ -72,7 +73,7 @@ public:
 
 	template <typename... Args>
 	void update(int l, int r, Args&&... args) {
-		_update(1, 0, n, l, r, forward<Args>(args)...);
+		_update(1, 0, n, l, r, std::forward<Args>(args)...);
 	}
 
 protected:
@@ -107,13 +108,13 @@ private:
 			return;
 		}
 		if (l <= l1 && r >= r1) {
-			a[v].update(forward<Args>(args)...);
+			a[v].update(std::forward<Args>(args)...);
 			return;
 		}
 		push(v);
 		int m = (l1 + r1) / 2;
-		_update(v + v, l1, m, l, r, forward<Args>(args)...);
-		_update(v + v + 1, m, r1, l, r, forward<Args>(args)...);
+		_update(v + v, l1, m, l, r, std::forward<Args>(args)...);
+		_update(v + v + 1, m, r1, l, r, std::forward<Args>(args)...);
 		a[v] = merge(a[v + v], a[v + v + 1]);
 	}
 };
