@@ -1,7 +1,14 @@
 #pragma once
 
-#include "../../base/base.h"
+#include <cassert>
+#include <optional>
+#include <iostream>
+#include <vector>
+
 #include "../../base/util.h"
+
+using std::optional, std::nullopt;
+using std::vector;
 
 template <typename T>
 struct Matrix {
@@ -186,6 +193,14 @@ struct Matrix {
 		return gauss(a).det;
 	}
 
+	void transpose() {
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < i; ++j) {
+				swap(a[i][j], a[j][i]);
+			}
+		}
+	}
+
 	optional<Matrix<T>> inverse() const {
 		if (auto res = gauss(a); res.success) {
 			Matrix m(n);
@@ -257,7 +272,7 @@ struct Matrix {
 };
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const Matrix<T>& m) {
+std::ostream& operator <<(std::ostream& ostr, const Matrix<T>& m) {
 	for (int i = 0; i < m.n; ++i) {
 		if (i) {
 			ostr << "\n";
@@ -273,7 +288,7 @@ ostream& operator <<(ostream& ostr, const Matrix<T>& m) {
 }
 
 template <typename T>
-istream& operator >>(istream& istr, Matrix<T>& m) {
+std::istream& operator >>(std::istream& istr, Matrix<T>& m) {
 	for (int i = 0; i < m.n; ++i) {
 		for (int j = 0; j < m.n; ++j) {
 			istr >> m[i][j];

@@ -1,7 +1,14 @@
 #pragma once
 
-#include "../../base/base.h"
+#include <cassert>
+#include <optional>
+#include <iostream>
+#include <vector>
+
 #include "../../base/util.h"
+
+using std::optional, std::nullopt;
+using std::vector;
 
 template <typename T>
 struct RectMatrix {
@@ -170,11 +177,13 @@ struct RectMatrix {
 
 	RectMatrix<T> operator *(const RectMatrix<T>& ot) const {
 		assert(m == ot.n);
+		auto t = ot;
+		t.transpose();
 		RectMatrix<T> res(n, ot.m);
 		for (int i = 0; i < n; ++i) {
 			for (int k = 0; k < ot.m; ++k) {
 				for (int j = 0; j < m; ++j) {
-					res[i][k] += a[i][j] * ot[j][k];
+					res[i][k] += a[i][j] * t[k][j];
 				}
 			}
 		}
@@ -183,6 +192,17 @@ struct RectMatrix {
 
 	void operator *=(const RectMatrix<T>& ot) {
 		*this = *this * ot;
+	}
+
+	void transpose() {
+		vector<vector<T>> res(m, vector<T>(n));
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < m; ++j) {
+				res[j][i] = a[i][j];
+			}
+		}
+		swap(n, m);
+		a = res;
 	}
 
 	optional<vector<vector<T>>> row_basis() const {
@@ -256,7 +276,7 @@ struct RectMatrix {
 };
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const RectMatrix<T>& m) {
+std::ostream& operator <<(std::ostream& ostr, const RectMatrix<T>& m) {
 	for (int i = 0; i < m.n; ++i) {
 		if (i) {
 			ostr << "\n";
@@ -272,7 +292,7 @@ ostream& operator <<(ostream& ostr, const RectMatrix<T>& m) {
 }
 
 template <typename T>
-istream& operator >>(istream& istr, RectMatrix<T>& m) {
+std::istream& operator >>(std::istream& istr, RectMatrix<T>& m) {
 	for (int i = 0; i < m.n; ++i) {
 		for (int j = 0; j < m.m; ++j) {
 			istr >> m[i][j];
