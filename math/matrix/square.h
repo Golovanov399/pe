@@ -174,11 +174,13 @@ struct Matrix {
 
 	Matrix<T> operator *(const Matrix<T>& ot) const {
 		assert(n == ot.n);
+		auto t = ot;
+		t.transpose();
 		Matrix<T> res(n);
 		for (int i = 0; i < n; ++i) {
 			for (int k = 0; k < n; ++k) {
 				for (int j = 0; j < n; ++j) {
-					res[i][k] += a[i][j] * ot[j][k];
+					res[i][k] += a[i][j] * t[k][j];
 				}
 			}
 		}
