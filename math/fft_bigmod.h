@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cmath>
+
 #include "fft_interface.h"
 #include "complex.h"
-#include "modular.h"
 
 template <typename modulo_type, typename real_type, int N>
-class FFTMod : public IFFT<modulo_type, complex<real_type>, N> {
+class FFTMod : public IFFT<real_type, complex<real_type>, N> {
 	using base = complex<real_type>;
 public:
 	// Be careful, it's usually better to use 2 or 3 modulos NTT and then CRT (if vectors are ~5e5)
@@ -24,13 +24,13 @@ public:
 		vector<real_type> a_large(n + n), b_large(n + n);
 		vector<real_type> a_sum(n + n), b_sum(n + n);
 		for (int i = 0; i < (int)a.size(); ++i) {
-			a_large[i] = (int)a[i] / block;
-			a_small[i] = (int)a[i] - round(a_large[i] * block);
+			a_large[i] = a[i]() / block;
+			a_small[i] = a[i]() - round(a_large[i] * block);
 			a_sum[i] = a_small[i] + a_large[i];
 		}
 		for (int i = 0; i < (int)b.size(); ++i) {
-			b_large[i] = (int)b[i] / block;
-			b_small[i] = (int)b[i] - round(b_large[i] * block);
+			b_large[i] = b[i]() / block;
+			b_small[i] = b[i]() - round(b_large[i] * block);
 			b_sum[i] = b_small[i] + b_large[i];
 		}
 		auto [ar_small, ar_large] = simultaneous_fft(a_small, a_large);
@@ -61,7 +61,7 @@ public:
 
 protected:
 	void fill_angles() {
-		const real_type pi = acos(-1);
+		const real_type pi = acosl(-1);
 		const base root{cos(2 * pi / N), sin(2 * pi / N)};
 		this->angles.assign(N, 1);
 		for (int i = 1; i < N; ++i) {
@@ -72,7 +72,7 @@ protected:
 		}
 	}
 
-	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) const {
+	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) {
 		assert(a.size() == b.size());
 		const int n = a.size();
 		assert(!(n & (n - 1)));

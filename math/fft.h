@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cmath>
+
 #include "fft_interface.h"
 #include "complex.h"
 
@@ -56,7 +57,7 @@ protected:
 		}
 	}
 
-	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) const {
+	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) {
 		assert(a.size() == b.size());
 		const int n = a.size();
 		assert(!(n & (n - 1)));

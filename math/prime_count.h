@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <numeric>
+
 #include "prime_count_cheat.h"
 #include "prime_count_mine.h"
 
@@ -7,6 +10,8 @@
 #include "modular.h"
 #include "../base/util.h"
 #include "../ds/fenwick.h"
+
+using std::max, std::min, std::iota;
 
 // Let h be a completely multiplicative function, hp(n) = sum_{i=1}^n h(i).
 // Then this class allows one to calculate sum_{i=1}^{[n/k]} [i is prime] * h(i) for every k.

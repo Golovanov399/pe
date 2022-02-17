@@ -1,6 +1,13 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cassert>
+#include <type_traits>
+#include <ostream>
+#include <utility>
+#include <tuple>
+
+using std::is_integral_v, std::is_floating_point_v;
+using std::pair, std::ostream;
 
 template <typename T>
 bool is_zero(const T& x) {
@@ -50,7 +57,7 @@ struct my_complex {
 	}
 
 	my_complex& operator *=(const my_complex& ot) {
-		tie(x, y) = pair{x * ot.x - y * ot.y, x * ot.y + y * ot.x};
+		std::tie(x, y) = pair{x * ot.x - y * ot.y, x * ot.y + y * ot.x};
 		return *this;
 	}
 

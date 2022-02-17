@@ -1,7 +1,10 @@
 #pragma once
 
-#include "../base/base.h"
-#include "../base/istream.h"
+#include <type_traits>
+#include <iostream>
+
+using std::decay, std::integral_constant;
+using std::istream, std::ostream;
 
 template <typename T>
 struct TypeModular {
@@ -151,7 +154,9 @@ ostream& operator <<(ostream& ostr, const TypeModular<T>& x) {
 
 template <typename T>
 istream& operator >>(istream& istr, TypeModular<T>& x) {
-	x = nxt(istr);
+	long long y;
+	istr >> y;
+	x = y;
 	return istr;
 }
 

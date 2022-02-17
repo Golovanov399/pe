@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+
+using std::vector;
 
 template <typename T>
 vector<T> find_linear_recurrence(const vector<T>& a) {

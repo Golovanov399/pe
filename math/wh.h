@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../base/base.h"
-
 template <typename T>
 void and_wh(T b, T e, bool inverse = false) {
 	if (e == b + 1) {

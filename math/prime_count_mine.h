@@ -2,6 +2,12 @@
 
 #include "sieve.h"
 #include "../ds/fenwick.h"
+#include "../base/defines.h"
+
+#include <cmath>
+#include <functional>
+
+using std::function;
 
 [[deprecated("better use prime_count(n) from prime_count_cheat.h")]] long long count_primes(long long n) {
 	if (n <= 1000) {

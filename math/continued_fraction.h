@@ -1,7 +1,12 @@
 #pragma once
 
+#include <ostream>
+#include <vector>
+
 #include "../base/traits.h"
 #include "crt.h"
+
+using std::vector;
 
 template <typename T>
 struct ContinuedFraction {
@@ -17,7 +22,7 @@ struct ContinuedFraction {
 };
 
 template <typename T>
-ostream& operator <<(ostream& ostr, const ContinuedFraction<T>& f) {
+std::ostream& operator <<(std::ostream& ostr, const ContinuedFraction<T>& f) {
 	return ostr << f.x << "/" << f.y;
 }
 

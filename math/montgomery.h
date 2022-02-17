@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cstdint>
+#include <istream>
+#include <ostream>
+
+using std::istream, std::ostream;
 
 template <uint32_t base>
 struct Montgomery {

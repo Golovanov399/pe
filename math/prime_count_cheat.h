@@ -2,6 +2,10 @@
 
 #include "../base/util.h"
 
+#include <vector>
+
+using std::vector;
+
 // __attribute__((target("avx2"), optimize("O3", "unroll-loops")))
 long long prime_count(const long long N) {
 	if (N <= 1) return 0;

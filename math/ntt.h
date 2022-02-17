@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../base/base.h"
 #include "fft_interface.h"
-// #include "modular.h"
 #include "montgomery.h"
 
 template <int mod, int N = (1 << __builtin_ctz(mod - 1))>

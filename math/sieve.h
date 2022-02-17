@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../base/base.h"
+#include <vector>
+#include <utility>
+
+using std::vector, std::pair;
 
 pair<vector<int>, vector<int>> sieve(int n) {
 	vector<int> erat(n + 1);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "../base/traits.h"
 #include "../base/util.h"
 #include "modular.h"

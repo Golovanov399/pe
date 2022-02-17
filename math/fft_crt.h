@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../base/base.h"
 #include "../base/traits.h"
 #include "fft_interface.h"
 #include "ntt.h"

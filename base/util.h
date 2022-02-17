@@ -1,6 +1,14 @@
 #pragma once
 
 #include "traits.h"
+#include "defines.h"
+
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
+using std::swap, std::vector;
+using std::is_same_v, std::is_integral_v, std::is_floating_point_v, std::conditional_t, std::enable_if_t;
 
 #define _repeat_cat(a, b) a##b
 #define _repeat_helper(ctr, n) for (int _repeat_cat(_mx_, ctr) = n, _repeat_cat(_i_, ctr) = 0; _repeat_cat(_i_, ctr) < _repeat_cat(_mx_, ctr); ++_repeat_cat(_i_, ctr))
@@ -19,7 +27,7 @@ LI lcm(LI x, LI y) {
 }
 
 LI abs(LI x) {
-	return max(x, -x);
+	return x > 0 ? x : -x;
 }
 
 template <typename T>

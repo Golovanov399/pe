@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cmath>
+
 #include "../base/traits.h"
 #include "fft_interface.h"
 #include "complex.h"
 
 template <typename real_type, int N>
-class FFTLL : public IFFT<long long, complex<real_type>, N> {
+class FFTLL : public IFFT<real_type, complex<real_type>, N> {
 	using base = complex<real_type>;
 public:
 	// Be careful, it's usually better to use 2 or 3 modulos NTT and then CRT (if vectors are ~5e5)
@@ -72,7 +73,7 @@ protected:
 		}
 	}
 
-	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) const {
+	pair<vector<base>, vector<base>> simultaneous_fft(const vector<real_type>& a, const vector<real_type>& b) {
 		assert(a.size() == b.size());
 		const int n = a.size();
 		assert(!(n & (n - 1)));

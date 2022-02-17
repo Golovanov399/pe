@@ -1,6 +1,10 @@
 #pragma once
 
+#include <array>
+
 #include "../base/traits.h"
+
+using std::array;
 
 struct Nimber {
 	ull x;

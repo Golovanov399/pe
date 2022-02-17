@@ -1,6 +1,18 @@
 #pragma once
 
-#include "../base/base.h"
+#include <cassert>
+#include <vector>
+#include <algorithm>
+#include <utility>
+#include <type_traits>
+#include <stdexcept>
+
+#include "../base/defines.h"
+
+using std::vector, std::pair;
+using std::max, std::min, std::swap;
+using std::is_convertible_v;
+using std::runtime_error;
 
 template <typename outer_type, typename inner_type, int N>
 class IFFT {

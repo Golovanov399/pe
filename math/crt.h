@@ -1,8 +1,13 @@
 #pragma once
 
-#include "../base/base.h"
+#include <utility>
+#include <numeric>
+
 #include "../base/traits.h"
 #include "../base/util.h"
+
+using std::pair;
+using std::gcd, std::lcm;
 
 template <typename int_type>
 struct Remainder {
@@ -16,26 +21,32 @@ int_type inv(int_type a, int_type b) {
 }
 
 template <typename int_type>
-pair<int_type, int_type> euc(int_type a, int_type b) {
-	// returns such {x, y} that ax + by = gcd(a, b)
-	int sign_a = 1, sign_b = 1;
-	if (a < 0) {
-		sign_a *= -1;
-		a *= -1;
+void extgcd(int_type& a, int_type& b, int_type x, int_type y) {
+	if (y == 0) {
+		a = 1;
+		b = 0;
+		return;
 	}
-	if (b < 0) {
-		sign_b *= -1;
-		b *= -1;
+	extgcd(b, a, y, x % y);
+	b -= x / y * a;
+}
+
+template <typename int_type>
+pair<int_type, int_type> extgcd(int_type x, int_type y) {
+	int_type a, b;
+	extgcd(a, b, x > 0 ? x : -x, y > 0 ? y : -y);
+	if (x < 0) {
+		a = -a;
 	}
-	if (!a) {
-		return {0, sign_b};
+	if (y < 0) {
+		b = -b;
 	}
-	if (!b) {
-		return {sign_a, 0};
-	}
-	auto g = gcd(a, b);
-	auto x = inv(a / g, b / g);
-	return {x * sign_a, (g - a * x) / b * sign_b};
+	return {a, b};
+}
+
+template <typename int_type>
+pair<int_type, int_type> euc(int_type x, int_type y) {
+	return extgcd(x, y);
 }
 
 template <typename int_type>
@@ -48,7 +59,7 @@ bool crt_once(Remainder<int_type>& r1, const Remainder<int_type>& r2) {
 	if (x < r2.mod) {
 		x += r2.mod;
 	}
-	r1 = {lcm(r1.mod, r2.mod), r1.rem + (int_type)(x * inv<LI>(r1.mod / g, r2.mod / g) % r2.mod) * (r1.mod / g)};
+	r1 = {lcm(r1.mod, r2.mod), r1.rem + (int_type)(x * (euc(r1.mod, r2.mod).first + r2.mod) % r2.mod) * (r1.mod / g)};
 	return true;
 }
 
