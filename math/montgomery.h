@@ -96,6 +96,10 @@ struct Montgomery {
 		return pow(base - 2);
 	}
 
+	Montgomery inv() const {
+		return inverse();
+	}
+
 	Montgomery pow(int64_t p) const {
 		if (p < 0) {
 			return pow(-p).inverse();
