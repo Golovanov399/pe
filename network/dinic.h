@@ -48,7 +48,7 @@ public:
 	}
 
 private:
-	vector<int> d;
+	vector<int_type> d;
 	vector<int> ptr;
 	static inline constexpr int_type inf = std::numeric_limits<int_type>::max();
 
