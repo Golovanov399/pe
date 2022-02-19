@@ -6,6 +6,7 @@
 
 using std::map, std::unordered_map, std::vector;
 using std::is_same_v, std::is_integral_v, std::decay_t;
+using std::forward, std::ref;
 
 template <typename S, typename T, typename Container, typename Fun>
 class GenericMemoizerResult {
