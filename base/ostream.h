@@ -9,28 +9,27 @@
 #include <tuple>
 #include <utility>
 #include <vector>
-#include "traits.h"
 
 using std::ostream, std::cout;
 using std::make_tuple;
 
-ostream& operator <<(ostream& ostr, LI x) {
-	static constexpr li BIG = 1e18;
+ostream& operator <<(ostream& ostr, __int128_t x) {
+	static constexpr int64_t BIG = 1e18;
 	if (x < 0) {
 		ostr << "-";
 		x = -x;
 	}
 	if (x < BIG) {
-		return ostr << (li)x;
+		return ostr << (int64_t)x;
 	} else if (x / BIG >= BIG) {
 		std::stringstream ss;
-		ss << std::setfill('0') << std::setw(18) << (li)(x / BIG % BIG);
-		ss << std::setfill('0') << std::setw(18) << (li)(x % BIG);
-		return ostr << (li)(x / BIG / BIG) << ss.str();
+		ss << std::setfill('0') << std::setw(18) << (int64_t)(x / BIG % BIG);
+		ss << std::setfill('0') << std::setw(18) << (int64_t)(x % BIG);
+		return ostr << (int64_t)(x / BIG / BIG) << ss.str();
 	} else {
 		std::stringstream ss;
-		ss << std::setfill('0') << std::setw(18) << (li)(x % BIG);
-		return ostr << (li)(x / BIG) << ss.str();
+		ss << std::setfill('0') << std::setw(18) << (int64_t)(x % BIG);
+		return ostr << (int64_t)(x / BIG) << ss.str();
 	}
 }
 
