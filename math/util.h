@@ -1,6 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include "montgomery.h"
+
+using std::vector;
 
 template <int mod>
 struct InvfactStuff {
