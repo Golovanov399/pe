@@ -262,7 +262,7 @@ public:
 
 	Poly multipoint(Poly p, const vector<outer_type>& x) {
 		ProductTree tree(x, this);
-		return multipoint(tree, p);
+		return tree.multipoint(p);
 	}
 
 	Poly interpolate(const vector<outer_type>& x, const vector<outer_type>& y) {
