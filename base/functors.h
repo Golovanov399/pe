@@ -15,3 +15,7 @@ CREATE_FUNCTOR(Max, std::max(x, y));
 CREATE_FUNCTOR(Sum, x + y);	// there already is std::plus
 CREATE_FUNCTOR(Prod, x * y);	// there already is std::multiplies
 // for more refer to https://en.cppreference.com/w/cpp/header/functional
+
+struct Nop {
+	constexpr void operator ()(...) const {}
+};
