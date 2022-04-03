@@ -19,7 +19,7 @@ struct Fenwick {
 	}
 
 	V get(int pos) const {
-		V res = 0;
+		V res = V{};
 		while (pos >= 0) {
 			res += a[pos];
 			pos = (pos & (pos + 1)) - 1;
