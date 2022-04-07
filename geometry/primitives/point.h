@@ -1,7 +1,10 @@
 #pragma once
 
-#include "../../base/base.h"
+#include <iostream>
+
 #include "../../base/util.h"
+
+using std::istream, std::ostream, std::cout;
 
 template <typename T>
 struct Point {
