@@ -1,7 +1,11 @@
 #pragma once
 
+#include <optional>
+
 #include "../../base/util.h"
 #include "line.h"
+
+using std::optional, std::nullopt;
 
 template <typename T>
 struct Segment {

@@ -27,7 +27,7 @@ public:
 		if (a.empty() || b.empty()) {
 			return {};
 		}
-		if ((int)a.size() > N / 2 || (int)b.size() > N / 2) {
+		if ((int)a.size() + (int)b.size() > N) {
 			Poly result(a.size() + b.size() - 1);
 			const int low_len = (max(a.size(), b.size()) + 1) / 2;
 			Poly a_low(a.begin(), min(a.begin() + low_len, a.end()));
@@ -62,10 +62,10 @@ public:
 			return result;
 		}
 		int n = 1;
-		while (n < (int)a.size() || n < (int)b.size()) {
+		while (n < (int)a.size() + (int)b.size()) {
 			n *= 2;
 		}
-		vector<inner_type> ar(n + n), br(n + n);
+		vector<inner_type> ar(n), br(n);
 		if constexpr (is_convertible_v<outer_type, inner_type>) {
 			copy(all(a), ar.begin());
 			copy(all(b), br.begin());

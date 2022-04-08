@@ -2,6 +2,8 @@
 
 #include <cstring>
 
+using std::forward;
+
 // taken from https://github.com/NyaanNyaan/library/blob/master/misc/fastio.hpp
 namespace fastio {
 

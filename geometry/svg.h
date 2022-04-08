@@ -1,20 +1,28 @@
 #pragma once
 
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <iomanip>
+
 #include "polygon.h"
+
+using std::stringstream, std::string;
+using std::ofstream;
 
 class SVG {
 public:
 	static constexpr ld view_offset = .1;
 
 	SVG() {
-		ss << setprecision(6) << fixed;
+		ss << std::setprecision(6) << std::fixed;
 		min_x = 1e18;
 		max_x = -1e18;
 		min_y = 1e18;
 		max_y = -1e18;
 	}
 
-	void circle(ld x, ld y, ld r, string fill = "black", string outline = "", ld width = 1, ld alpha = 1.) {
+	void circle(ld x, ld y, ld r, string fill = "black", string outline = "", ld width = 0.1, ld alpha = 1.) {
 		flip(y);
 		relax(x - r, y - r);
 		relax(x + r, y + r);
@@ -22,7 +30,7 @@ public:
 		finish_attributes(fill, outline, width, alpha);
 	}
 
-	void rect(ld x1, ld y1, ld x2, ld y2, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
+	void rect(ld x1, ld y1, ld x2, ld y2, string fill = "none", string outline = "black", ld width = 0.1, ld alpha = 1.) {
 		flip(y1);
 		flip(y2);
 		relax(x1, y1);
@@ -37,7 +45,7 @@ public:
 		finish_attributes(fill, outline, width, alpha);
 	}
 
-	void line(ld x1, ld y1, ld x2, ld y2, string outline = "black", ld width = 1, ld alpha = 1.) {
+	void line(ld x1, ld y1, ld x2, ld y2, string outline = "black", ld width = 0.1, ld alpha = 1.) {
 		flip(y1);
 		flip(y2);
 		relax(x1, y1);
@@ -47,7 +55,7 @@ public:
 	}
 
 	template <typename T>
-	void polyline(const vector<Point<T>>& pts, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
+	void polyline(const vector<Point<T>>& pts, string fill = "none", string outline = "black", ld width = 0.1, ld alpha = 1.) {
 		for (const auto& p : pts) {
 			relax(p.x, -p.y);
 		}
@@ -70,22 +78,22 @@ public:
 	}
 
 	template <typename T>
-	void draw(const Point<T>& p, ld r = 0.2, string fill = "black", string outline = "", ld width = 1, ld alpha = 1.) {
+	void draw(const Point<T>& p, ld r = 0.2, string fill = "black", string outline = "", ld width = 0.1, ld alpha = 1.) {
 		circle(p.x, p.y, r, fill, outline, width, alpha);
 	}
 
 	template <typename T>
-	void draw(const Circle<T>& c, string fill = "black", string outline = "", ld width = 1, ld alpha = 1.) {
+	void draw(const Circle<T>& c, string fill = "black", string outline = "", ld width = 0.1, ld alpha = 1.) {
 		draw(c.p, c.r, fill, outline, width, alpha);
 	}
 
 	template <typename T>
-	void draw(const Segment<T>& s, string outline = "black", ld width = 1, ld alpha = 1.) {
+	void draw(const Segment<T>& s, string outline = "black", ld width = 0.1, ld alpha = 1.) {
 		line(s.p.x, s.p.y, s.q.x, s.q.y, outline, width, alpha);
 	}
 
 	template <typename T>
-	void draw(const Polygon<T>& poly, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
+	void draw(const Polygon<T>& poly, string fill = "none", string outline = "black", ld width = 0.1, ld alpha = 1.) {
 		auto pts = poly.pts;
 		pts.push_back(poly.pts[0]);
 		polyline(pts, fill, outline, width, alpha);
