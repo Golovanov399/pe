@@ -49,7 +49,7 @@ public:
 	template <typename T>
 	void polyline(const vector<Point<T>>& pts, string fill = "none", string outline = "black", ld width = 1, ld alpha = 1.) {
 		for (const auto& p : pts) {
-			relax(p);
+			relax(p.x, -p.y);
 		}
 		ss << "<polyline points=\"";
 		for (int i = 0; i < (int)pts.size(); ++i) {
