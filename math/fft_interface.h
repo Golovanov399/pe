@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include "../base/defines.h"
+#include "../base/util.h"
 
 using std::vector, std::pair;
 using std::max, std::min, std::swap;
@@ -110,6 +111,32 @@ public:
 			copy_n(ar.begin(), res.size(), res.begin());
 		} else {
 			throw runtime_error("please, implement your own child square function");
+		}
+		return res;
+	}
+
+	virtual Poly pow(const Poly& a, int k) {
+		int n = 1;
+		while (n < (int)a.size() * k - k + 1) {
+			n *= 2;
+		}
+		vector<inner_type> ar(n);
+		if constexpr (is_convertible_v<outer_type, inner_type>) {
+			copy(all(a), ar.begin());
+		} else {
+			throw runtime_error("please, implement your own child pow function");
+		}
+		fft(ar);
+		for (int i = 0; i < (int)ar.size(); ++i) {
+			ar[i] = pw(ar[i], k);
+		}
+		ifft(ar);
+		Poly res((int)a.size() * k - k + 1);
+		assert(res.size() <= ar.size());
+		if constexpr (is_convertible_v<inner_type, outer_type>) {
+			copy_n(ar.begin(), res.size(), res.begin());
+		} else {
+			throw runtime_error("please, implement your own child pow function");
 		}
 		return res;
 	}
