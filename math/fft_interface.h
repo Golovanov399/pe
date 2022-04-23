@@ -24,6 +24,9 @@ public:
 	~IFFT() {}
 
 	virtual Poly multiply(Poly a, Poly b) {
+		if (a.empty() && b.empty()) {
+			return {};
+		}
 		if ((int)a.size() > N / 2 || (int)b.size() > N / 2) {
 			Poly result(a.size() + b.size() - 1);
 			const int low_len = (max(a.size(), b.size()) + 1) / 2;
