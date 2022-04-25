@@ -2,13 +2,14 @@
 
 #include "traits.h"
 #include "defines.h"
+#include "sign.h"
 
 #include <algorithm>
 #include <cmath>
 #include <vector>
 
 using std::swap, std::vector;
-using std::is_same_v, std::is_integral_v, std::is_floating_point_v, std::conditional_t, std::enable_if_t;
+using std::is_same_v, std::conditional_t;
 
 #define _repeat_cat(a, b) a##b
 #define _repeat_helper(ctr, n) for (int _repeat_cat(_mx_, ctr) = n, _repeat_cat(_i_, ctr) = 0; _repeat_cat(_i_, ctr) < _repeat_cat(_mx_, ctr); ++_repeat_cat(_i_, ctr))
@@ -104,21 +105,6 @@ bool remax(T& x, T y) {
 	} else {
 		return false;
 	}
-}
-
-ld eps = 1e-8;
-void set_eps(ld new_eps) {
-	eps = new_eps;
-}
-
-template <typename T>
-enable_if_t<is_integral_v<T>, int> sign(T x) {
-	return x < 0 ? -1 : x > 0;
-}
-
-template <typename T>
-enable_if_t<is_floating_point_v<T>, int> sign(T x) {
-	return x < -eps ? -1 : x > eps;
 }
 
 int isqrt(long long n) {
