@@ -21,7 +21,7 @@ public:
 
 	Dinic(int _n): n(_n), eids(_n) {}
 
-	void add_edge(int u, int v, int_type c, bool bidirectional = true) {
+	void add_edge(int u, int v, int_type c, bool bidirectional = false) {
 		eids[u].push_back(edges.size());
 		edges.push_back({u, v, c, 0});
 		eids[v].push_back(edges.size());
