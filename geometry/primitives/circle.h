@@ -31,7 +31,7 @@ struct Circle {
 		}
 		T d = dist(p, ot.p);
 		T cos_phi = (sqr(d) + sqr(ot.r) - sqr(r)) / 2 / d / ot.r;
-		if (sign(abs(cos_phi) - 1) == 0) {
+		if (sign(std::abs(cos_phi) - 1) == 0) {
 			return {ot.p + (p - ot.p) * (ot.r / d) * cos_phi};
 		}
 		T sin_phi = sqrt(1 - sqr(cos_phi));

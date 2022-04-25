@@ -48,3 +48,29 @@ Line<T> segment_bisector(const Point<T>& p, const Point<T>& q) {
 	static_assert(!is_integral_v<T>);
 	return {(p + q) / 2, (q - p).rot90()};
 }
+
+template <typename T>
+T dist(const Line<T>& l, const Point<T>& p) {
+	static_assert(!is_integral_v<T>);
+	return std::abs<T>((p - l.p).cross(l.v)) / l.v.len();
+}
+
+template <typename T>
+inline T dist(const Point<T>& p, const Line<T>& l) {
+	return dist(l, p);
+}
+
+template <typename T>
+Line<T> angle_bisector(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
+	static_assert(!is_integral_v<T>);
+	Point<T> u = a - b, v = c - b;
+	u /= u.len();
+	v /= v.len();
+	v += u;
+	auto l = v.len();
+	if (!sign(l)) {
+		return Line<T>{b, u.rot90()};
+	} else {
+		return Line<T>{b, v / l};
+	}
+}
