@@ -162,6 +162,48 @@ struct Biginteger {
 		return res;
 	}
 
+	static vector<u32> _div(vector<u32> a, const vector<u32>& b) {
+		vector<u32> res;
+		u64 cur = 0;
+		for (int i = (int)a.size() - 1; i >= (int)b.size() - 1; --i) {
+			cur *= BASE;
+			cur += a[i];
+			u32 le = cur / (b.back() + 1);
+			u32 ri = cur / b.back() + 1;
+			while (ri > le + 1) {
+				u32 k = (le + ri) / 2;
+				u64 carry = 0;
+				for (int j = (int)b.size() - 1; j > 0; --j) {
+					carry += (u64)b[(int)b.size() - 1 - j] * k;
+					if (carry % BASE > a[i - j]) {
+						carry += BASE;
+					}
+					carry /= BASE;
+				}
+				carry += (u64)b.back() * k;
+				(carry <= cur ? le : ri) = k;
+			}
+			u32 k = le;
+			res.push_back(k);
+			u64 carry = 0;
+			for (int j = (int)b.size() - 1; j > 0; --j) {
+				carry += (u64)b[(int)b.size() - 1 - j] * k;
+				if (carry % BASE <= a[i - j]) {
+					a[i - j] -= carry % BASE;
+				} else {
+					a[i - j] += BASE;
+					a[i - j] -= carry % BASE;
+					carry += BASE;
+				}
+				carry /= BASE;
+			}
+			carry += (u64)b.back() * k;
+			cur -= carry;
+		}
+		reverse(res.begin(), res.end());
+		return res;
+	}
+
 	Biginteger& operator +=(const Biginteger& ot) {
 		if (neg == ot.neg) {
 			_add(ot.digits);
@@ -266,6 +308,25 @@ struct Biginteger {
 	Biginteger& operator %=(i64 x) {
 		*this = *this % x;
 		return *this;
+	}
+
+	Biginteger& operator /=(const Biginteger& ot) {
+		if (ot.digits.empty()) {
+			throw std::domain_error("division by zero");
+		}
+		if (digits.empty()) {
+			return *this;
+		}
+		neg ^= ot.neg;
+		digits = _div(digits, ot.digits);
+		shrink();
+		return *this;
+	}
+
+	Biginteger operator /(const Biginteger& ot) const {
+		auto res = *this;
+		res /= ot;
+		return res;
 	}
 
 	bool operator <(const Biginteger& ot) const {
