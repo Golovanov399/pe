@@ -171,17 +171,27 @@ struct Biginteger {
 			u32 le = cur / (b.back() + 1);
 			u32 ri = cur / b.back() + 1;
 			while (ri > le + 1) {
-				u32 k = (le + ri) / 2;
-				u64 carry = 0;
-				for (int j = (int)b.size() - 1; j > 0; --j) {
-					carry += (u64)b[(int)b.size() - 1 - j] * k;
-					if (carry % BASE > a[i - j]) {
-						carry += BASE;
+				u32 k = le + (ri - le) / 2;
+
+				u64 can = cur;
+				bool ok = true;
+				for (int j = 0; j < (int)b.size(); ++j) {
+					if (j) {
+						can = can * BASE + a[i - j];
 					}
-					carry /= BASE;
+					if (can < (u64)b[(int)b.size() - 1 - j] * k) {
+						ok = false;
+						break;
+					}
+					can -= (u64)b[(int)b.size() - 1 - j] * k;
+					if (can >= k) {
+						break;
+					}
 				}
-				carry += (u64)b.back() * k;
-				(carry <= cur ? le : ri) = k;
+				if (can < 0) {
+					ok = false;
+				}
+				(ok ? le : ri) = k;
 			}
 			u32 k = le;
 			res.push_back(k);
