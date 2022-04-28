@@ -98,6 +98,13 @@ struct FixedPrecision {
 		return res;
 	}
 
+	std::string to_string() const {
+		std::string s;
+		std::ostringstream ss(s);
+		ss << *this;
+		return s;
+	}
+
 	strong_ordering operator <=>(const Fp& ot) const {
 		return x <=> ot.x;
 	}
