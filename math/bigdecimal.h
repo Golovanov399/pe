@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "biginteger.h"
 
 template <int prec>
@@ -9,7 +11,7 @@ struct FixedPrecision {
 
 	FixedPrecision() {}
 	template <typename T>
-	FixedPrecision(T&& y) requires(std::is_integral_v<T> || std::is_floating_point_v<T>) {
+	FixedPrecision(T y) requires(std::is_integral_v<T> || std::is_floating_point_v<T>) {
 		if constexpr (std::is_integral_v<T>) {
 			x = BigInteger(y);
 			x.add_zeroes(prec);
@@ -116,4 +118,4 @@ struct FixedPrecision {
 	}
 };
 
-using BigDecimal = FixedPrecision<27>;
+using BigDecimal = FixedPrecision<36>;
