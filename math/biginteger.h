@@ -14,7 +14,7 @@
 
 using std::vector;
 
-struct Biginteger {
+struct BigInteger {
 	using u32 = uint32_t;
 	using u64 = uint64_t;
 	using i64 =  int64_t;
@@ -24,7 +24,7 @@ struct Biginteger {
 	vector<u32> digits;
 	bool neg;
 
-	Biginteger(long long x = 0): neg(false) {
+	BigInteger(long long x = 0): neg(false) {
 		if (x < 0) {
 			neg = true;
 			x = -x;
@@ -35,7 +35,7 @@ struct Biginteger {
 		}
 	}
 
-	Biginteger(const std::string& s) {
+	BigInteger(const std::string& s) {
 		neg = false;
 		digits = {};
 		int i = (int)s.length() - 1;
@@ -55,8 +55,8 @@ struct Biginteger {
 		shrink();
 	}
 
-	Biginteger from_int128(__int128_t x) {
-		Biginteger res;
+	BigInteger from_int128(__int128_t x) {
+		BigInteger res;
 		if (x < 0) {
 			res.neg = true;
 			x = -x;
@@ -68,8 +68,8 @@ struct Biginteger {
 		return res;
 	}
 
-	static Biginteger from_digits(const vector<u32>& dgs, bool neg = false) {
-		Biginteger res;
+	static BigInteger from_digits(const vector<u32>& dgs, bool neg = false) {
+		BigInteger res;
 		res.digits = dgs;
 		res.neg = neg;
 		return res;
@@ -84,7 +84,7 @@ struct Biginteger {
 		}
 	}
 
-	int _cmp(const Biginteger& ot) const {
+	int _cmp(const BigInteger& ot) const {
 		if (digits.size() != ot.digits.size()) {
 			return sign((int)digits.size() - (int)ot.digits.size());
 		}
@@ -162,6 +162,14 @@ struct Biginteger {
 		return res;
 	}
 
+	static int _len(const vector<u32>& dgs) {
+		if (dgs.empty()) {
+			return 0;
+		} else {
+			return ((int)dgs.size() - 1) * BASE_LEN + std::to_string(dgs.back()).length();
+		}
+	}
+
 	static vector<u32> _div(vector<u32> a, const vector<u32>& b) {
 		vector<u32> res;
 		u64 cur = 0;
@@ -188,9 +196,6 @@ struct Biginteger {
 						break;
 					}
 				}
-				if (can < 0) {
-					ok = false;
-				}
 				(ok ? le : ri) = k;
 			}
 			u32 k = le;
@@ -214,7 +219,7 @@ struct Biginteger {
 		return res;
 	}
 
-	Biginteger& operator +=(const Biginteger& ot) {
+	BigInteger& operator +=(const BigInteger& ot) {
 		if (neg == ot.neg) {
 			_add(ot.digits);
 		} else if (_cmp(ot) < 0) {
@@ -228,7 +233,7 @@ struct Biginteger {
 		return *this;
 	}
 
-	Biginteger& operator -=(const Biginteger& ot) {
+	BigInteger& operator -=(const BigInteger& ot) {
 		if (neg == !ot.neg) {
 			_add(ot.digits);
 		} else if (_cmp(ot) < 0) {
@@ -242,19 +247,19 @@ struct Biginteger {
 		return *this;
 	}
 
-	Biginteger operator +(const Biginteger& ot) const {
-		Biginteger res = *this;
+	BigInteger operator +(const BigInteger& ot) const {
+		BigInteger res = *this;
 		res += ot;
 		return res;
 	}
 
-	Biginteger operator -(const Biginteger& ot) const {
-		Biginteger res = *this;
+	BigInteger operator -(const BigInteger& ot) const {
+		BigInteger res = *this;
 		res -= ot;
 		return res;
 	}
 
-	Biginteger& operator *=(const Biginteger& ot) {
+	BigInteger& operator *=(const BigInteger& ot) {
 		if (digits.empty() || ot.digits.empty()) {
 			digits = {};
 			neg = false;
@@ -265,14 +270,14 @@ struct Biginteger {
 		return *this;
 	}
 
-	Biginteger operator *(const Biginteger& ot) const {
+	BigInteger operator *(const BigInteger& ot) const {
 		if (digits.empty() || ot.digits.empty()) {
 			return from_digits({});
 		}
 		return from_digits(_mul(digits, ot.digits), neg ^ ot.neg);
 	}
 
-	Biginteger& operator /=(i64 x) {	// negative numbers are divided as in C++
+	BigInteger& operator /=(i64 x) {	// negative numbers are divided as in C++
 		if (x == 0) {
 			throw std::domain_error("division by zero");
 		}
@@ -291,7 +296,7 @@ struct Biginteger {
 		return *this;
 	}
 
-	Biginteger operator /(i64 x) const {
+	BigInteger operator /(i64 x) const {
 		auto res = *this;
 		res /= x;
 		return res;
@@ -315,12 +320,12 @@ struct Biginteger {
 		return (i64)carry * (flip ? -1 : 1);
 	}
 
-	Biginteger& operator %=(i64 x) {
+	BigInteger& operator %=(i64 x) {
 		*this = *this % x;
 		return *this;
 	}
 
-	Biginteger& operator /=(const Biginteger& ot) {
+	BigInteger& operator /=(const BigInteger& ot) {
 		if (ot.digits.empty()) {
 			throw std::domain_error("division by zero");
 		}
@@ -333,13 +338,13 @@ struct Biginteger {
 		return *this;
 	}
 
-	Biginteger operator /(const Biginteger& ot) const {
+	BigInteger operator /(const BigInteger& ot) const {
 		auto res = *this;
 		res /= ot;
 		return res;
 	}
 
-	bool operator <(const Biginteger& ot) const {
+	bool operator <(const BigInteger& ot) const {
 		if (neg != ot.neg) {
 			return neg;
 		} else {
@@ -351,11 +356,11 @@ struct Biginteger {
 		}
 	}
 
-	Biginteger pow(u32 x) const {
+	BigInteger pow(u32 x) const {
 		if (!x) {
 			return 1;
 		}
-		Biginteger res = 1;
+		BigInteger res = 1;
 		for (int i = 31 - __builtin_clz(x); i >= 0; --i) {
 			res *= res;
 			if ((x >> i) & 1) {
@@ -372,7 +377,58 @@ struct Biginteger {
 		return s;
 	}
 
-	friend std::ostream& operator <<(std::ostream& ostr, const Biginteger& num) {
+	void drop_digits(int cnt) {
+		if (!cnt) {
+			return;
+		}
+		int blocks = cnt / BASE_LEN;
+		if (blocks >= (int)digits.size()) {
+			digits = {};
+			shrink();
+			return;
+		}
+		digits.erase(digits.begin(), digits.begin() + blocks);
+		int rem = cnt - blocks * BASE_LEN;
+		if (rem) {
+			const u32 tp = [](int deg) { u32 res = 1; while (deg--) { res *= 10; } return res; }(rem);
+			for (int i = 0; i + 1 < (int)digits.size(); ++i) {
+				digits[i] = digits[i] / tp + (digits[i + 1] % tp) * (BASE / tp);
+			}
+			digits.back() /= tp;
+			shrink();
+		}
+	}
+
+	void add_zeroes(int cnt) {
+		if (digits.empty()) {
+			return;
+		}
+		int blocks = (cnt + BASE_LEN - 1) / BASE_LEN;
+		digits.resize(digits.size() + blocks);
+		std::copy(digits.begin(), digits.begin() + (int)digits.size() - blocks, digits.begin() + blocks);
+		std::fill(digits.begin(), digits.begin() + blocks, 0);
+		drop_digits(blocks * BASE_LEN - cnt);
+	}
+
+	void leave_digits(int cnt) {
+		int blocks = (cnt + BASE_LEN - 1) / BASE_LEN;
+		if (blocks > (int)digits.size()) {
+			return;
+		}
+		digits.resize(blocks);
+		if (cnt != blocks * BASE_LEN) {
+			int rem = cnt - (blocks - 1) * BASE_LEN;
+			const u32 tp = [](int deg) { u32 res = 1; while (deg--) { res *= 10; } return res; }(rem);
+			digits.back() %= tp;
+		}
+		shrink();
+	}
+
+	int length() const {
+		return _len(digits);
+	}
+
+	friend std::ostream& operator <<(std::ostream& ostr, const BigInteger& num) {
 		if (num.neg) {
 			ostr << "-";
 		}
@@ -388,10 +444,10 @@ struct Biginteger {
 		return ostr;
 	}
 
-	friend std::istream& operator >>(std::istream& istr, Biginteger& num) {
+	friend std::istream& operator >>(std::istream& istr, BigInteger& num) {
 		std::string s;
 		istr >> s;
-		num = Biginteger(s);
+		num = BigInteger(s);
 		return istr;
 	}
 };
