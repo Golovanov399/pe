@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <compare>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -12,7 +13,7 @@
 
 #include "../base/sign.h"
 
-using std::vector;
+using std::vector, std::strong_ordering;
 
 struct BigInteger {
 	using u32 = uint32_t;
@@ -344,15 +345,15 @@ struct BigInteger {
 		return res;
 	}
 
-	bool operator <(const BigInteger& ot) const {
+	strong_ordering operator <=>(const BigInteger& ot) const {
 		if (neg != ot.neg) {
-			return neg;
+			return neg ? strong_ordering::less : strong_ordering::greater;
 		} else {
 			int s = _cmp(ot);
 			if (neg) {
 				s = -s;
 			}
-			return s < 0;
+			return s < 0 ? strong_ordering::less : s > 0 ? strong_ordering::greater : strong_ordering::equal;
 		}
 	}
 

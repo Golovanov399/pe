@@ -98,6 +98,10 @@ struct FixedPrecision {
 		return res;
 	}
 
+	strong_ordering operator <=>(const Fp& ot) const {
+		return x <=> ot.x;
+	}
+
 	friend std::ostream& operator <<(std::ostream& ostr, const Fp& num) {
 		auto tmp = num.x;
 		tmp.drop_digits(prec);
