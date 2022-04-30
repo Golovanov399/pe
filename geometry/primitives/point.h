@@ -93,11 +93,19 @@ struct Point {
 
 	T len() const {
 		static_assert(!is_integral_v<T>);
-		return hypot<T>(x, y);
+		return std::hypot<T>(x, y);
 	}
 
 	T sqr() const {
 		return dot(*this);
+	}
+
+	void normalize() {
+		*this /= len();
+	}
+
+	Point normalized() const {
+		return *this / len();
 	}
 
 	friend T len(const Point& p) {
