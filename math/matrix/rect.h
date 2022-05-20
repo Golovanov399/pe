@@ -33,7 +33,7 @@ struct RectMatrix {
 			if constexpr (is_floating_point_v<T>) {
 				int mx = i;
 				for (int j = i + 1; j < n; ++j) {
-					if (abs(a[j][col]) > abs(a[mx][col])) {
+					if (std::abs(a[j][col]) > std::abs(a[mx][col])) {
 						mx = j;
 					}
 				}

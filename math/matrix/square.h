@@ -6,9 +6,10 @@
 #include <vector>
 
 #include "../../base/util.h"
+#include "rect.h"
 
 using std::optional, std::nullopt;
-using std::vector;
+using std::vector, std::abs;
 
 template <typename T>
 struct Matrix {
@@ -270,6 +271,16 @@ struct Matrix {
 
 	vector<T> characteristic() const {
 		return characteristic(a);
+	}
+
+	RectMatrix<T> as_rect_matrix() const {
+		RectMatrix<T> res(n, n);
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				res[i][j] = a[i][j];
+			}
+		}
+		return res;
 	}
 };
 

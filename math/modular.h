@@ -119,7 +119,7 @@ struct TypeModular {
 		return _inv(val, mod());
 	}
 
-	int operator ()() const {
+	Type operator ()() const {
 		return val;
 	}
 
