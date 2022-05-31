@@ -6,7 +6,7 @@
 #include "complex.h"
 
 template <typename modulo_type, typename real_type, int N>
-class FFTMod : public IFFT<real_type, complex<real_type>, N> {
+class FFTMod : public IFFT<modulo_type, complex<real_type>, N> {
 	using base = complex<real_type>;
 public:
 	// Be careful, it's usually better to use 2 or 3 modulos NTT and then CRT (if vectors are ~5e5)

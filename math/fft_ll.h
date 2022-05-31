@@ -62,7 +62,7 @@ public:
 
 protected:
 	void fill_angles() {
-		const real_type pi = acos(-1);
+		const real_type pi = acosl(-1);
 		const base root{cos(2 * pi / N), sin(2 * pi / N)};
 		this->angles.assign(N, 1);
 		for (int i = 1; i < N; ++i) {

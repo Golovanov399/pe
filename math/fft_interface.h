@@ -388,7 +388,7 @@ protected:
 
 	void ifft(vector<inner_type>& a) {
 		fft(a);
-		outer_type to_div = outer_type(1) / a.size();
+		inner_type to_div = inner_type(1) / a.size();
 		for (auto& x : a) {
 			x *= to_div;
 		}
