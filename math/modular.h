@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include "../base/traits.h"
 #include <iostream>
 
 using std::decay, std::integral_constant;
@@ -9,13 +9,14 @@ using std::istream, std::ostream;
 template <typename T>
 struct TypeModular {
 	using Type = typename decay<decltype(T::value)>::type;
+	using NextType = next_size<Type>::type;
 	Type val;
 
 	static constexpr Type mod() {
 		return T::value;
 	}
 
-	TypeModular(long long _val = 0) {
+	TypeModular(const Type& _val = 0) {
 		if (_val < 0 || (_val > 0 && _val >= mod())) {
 			val = _val % mod();
 			if (val < 0) {
@@ -47,7 +48,7 @@ struct TypeModular {
 	}
 
 	friend TypeModular operator *(const TypeModular& a, const TypeModular& b) {
-		return {1ll * a.val * b.val};
+		return TypeModular(NextType(a.val) * b.val % mod());
 	}
 
 	friend TypeModular operator /(const TypeModular& a, const TypeModular& b) {
@@ -71,7 +72,7 @@ struct TypeModular {
 	}
 
 	TypeModular& operator *=(const TypeModular& b) {
-		val = 1ll * val * b.val % mod();
+		val = NextType(val) * b.val % mod();
 		return *this;
 	}
 
@@ -105,7 +106,7 @@ struct TypeModular {
 	TypeModular pow(long long b) const {
 		TypeModular res{1}, a{*this};
 		while (b) {
-			if (b & 1ll) {
+			if (b & 1) {
 				res *= a;
 			}
 			b >>= 1;
@@ -123,8 +124,8 @@ struct TypeModular {
 		return val;
 	}
 
-	int _inv(int a, int b) const {
-		return a == 1 ? a : b - 1ll * _inv(b % a, a) * b / a % b;
+	static Type _inv(Type a, Type b) {
+		return a == 1 ? a : b - NextType(_inv(b % a, a)) * b / a % b;
 	}
 
 	explicit operator Type() const {
