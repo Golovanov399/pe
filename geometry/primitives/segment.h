@@ -6,6 +6,7 @@
 #include "line.h"
 
 using std::optional, std::nullopt;
+using std::is_integral_v;
 
 template <typename T>
 struct Segment {

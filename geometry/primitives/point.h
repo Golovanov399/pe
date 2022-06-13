@@ -5,6 +5,7 @@
 #include "../../base/util.h"
 
 using std::istream, std::ostream, std::cout;
+using std::is_integral_v;
 
 template <typename T>
 struct Point {
