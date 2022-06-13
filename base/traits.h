@@ -17,3 +17,4 @@ template <> struct next_size<int8_t> : tag<int16_t> {};
 template <> struct next_size<int16_t> : tag<int32_t> {};
 template <> struct next_size<int32_t> : tag<int64_t> {};
 template <> struct next_size<int64_t> : tag<__int128_t> {};
+template <> struct next_size<long long> : tag<__int128_t> {};
