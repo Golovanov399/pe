@@ -40,7 +40,7 @@ struct Matrix {
 		}
 		T det = 1;
 		for (int i = 0; i < n; ++i) {
-			if constexpr (is_floating_point_v<T>) {
+			if constexpr (std::is_floating_point_v<T>) {
 				int mx = i;
 				for (int j = i + 1; j < n; ++j) {
 					if (abs(a[j][i]) > abs(a[mx][i])) {

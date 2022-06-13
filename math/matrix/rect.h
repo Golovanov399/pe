@@ -30,7 +30,7 @@ struct RectMatrix {
 		vector<int> main_coords;
 		int i = 0;
 		for (int col = 0; i < n && col < m; ++col) {
-			if constexpr (is_floating_point_v<T>) {
+			if constexpr (std::is_floating_point_v<T>) {
 				int mx = i;
 				for (int j = i + 1; j < n; ++j) {
 					if (std::abs(a[j][col]) > std::abs(a[mx][col])) {
@@ -79,7 +79,7 @@ struct RectMatrix {
 		}
 
 		for (int row = i; row < n; ++row) {
-			if constexpr (is_floating_point_v<T>) {
+			if constexpr (std::is_floating_point_v<T>) {
 				if (sign(b[row])) {
 					return {false, a, b, main_coords};
 				}
