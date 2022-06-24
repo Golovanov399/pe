@@ -38,6 +38,21 @@ struct Polynomial {
 		return *this;
 	}
 
+	Polynomial& operator *=(const T& ot) {
+		for (auto& x : coeff) {
+			x *= ot;
+		}
+		return *this;
+	}
+
+	Polynomial& operator /=(const T& ot) {
+		auto i = (T)1 / ot;
+		for (auto& x : coeff) {
+			x *= i;
+		}
+		return *this;
+	}
+
 	Polynomial& operator <<=(int deg) {
 		extend_by(deg);
 		for (int i = (int)coeff.size() - 1; i >= deg; --i) {
@@ -66,6 +81,14 @@ struct Polynomial {
 
 	friend Polynomial operator *(Polynomial a, const Polynomial& b) {
 		return a *= b;
+	}
+
+	friend Polynomial operator *(Polynomial a, const T& b) {
+		return a *= b;
+	}
+
+	friend Polynomial operator /(Polynomial a, const T& b) {
+		return a /= b;
 	}
 
 	friend Polynomial operator <<(Polynomial a, int deg) {
