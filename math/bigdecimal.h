@@ -89,13 +89,16 @@ struct FixedPrecision {
 		}
 		Fp res = 1;
 		for (int i = 63 - __builtin_clzll(x); i >= 0; --i) {
-			std::cerr << res << "\n";
 			res *= res;
 			if ((x >> i) & 1) {
 				res *= *this;
 			}
 		}
 		return res;
+	}
+
+	Fp operator ^(uint64_t x) const {
+		return pow(x);
 	}
 
 	std::string to_string() const {
@@ -111,7 +114,11 @@ struct FixedPrecision {
 
 	friend std::ostream& operator <<(std::ostream& ostr, const Fp& num) {
 		auto tmp = num.x;
+		auto neg = tmp.neg;
 		tmp.drop_digits(prec);
+		if (tmp.digits.empty() && neg) {
+			ostr << "-";
+		}
 		ostr << tmp << ".";
 		tmp = num.x;
 		tmp.leave_digits(prec);
