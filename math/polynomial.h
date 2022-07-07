@@ -161,6 +161,10 @@ struct Polynomial {
 		}
 	}
 
+	void resize(int sz, const T& val = T()) {
+		coeff.resize(sz, val);
+	}
+
 	const T& operator [](int idx) const {
 		return coeff[idx];
 	}
