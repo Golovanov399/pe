@@ -16,6 +16,11 @@ struct TensorView {
 	const array<int, dim>& subsizes;
 	T* data;
 
+	TensorView& operator =(TensorView&& ot) {
+		std::copy(data, data + subsizes[idx + 1] * shape[idx], ot.data);
+		return *this;
+	}
+
 	TensorView<T, dim, idx + 1> operator [](int i) {
 		return {shape, subsizes, data + subsizes[idx] * i};
 	}
@@ -30,6 +35,11 @@ struct TensorView<T, dim, idx, std::enable_if_t<idx + 1 == dim>> {
 	const array<int, dim>& shape;
 	const array<int, dim>& subsizes;
 	T* data;
+
+	TensorView& operator =(TensorView&& ot) {
+		std::copy(data, data + shape[idx], ot.data);
+		return *this;
+	}
 
 	T& operator [](int i) {
 		return data[i];
