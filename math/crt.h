@@ -17,7 +17,7 @@ struct Remainder {
 
 template <typename int_type>
 int_type inv(int_type a, int_type b) {
-	return a == 1 ? 1 : b - inv(b % a, a) * b / a % b;
+	return a == 1 ? 1 : b - next_size_t<int_type>(inv(b % a, a)) * b / a % b;
 }
 
 template <typename int_type>
