@@ -7,6 +7,7 @@
 
 using std::array, std::tuple, std::swap;
 using std::forward_as_tuple;
+using std::get;
 
 template <typename T, int dim> struct Tensor;
 
@@ -55,7 +56,7 @@ struct indices {
 	using next = indices<I..., sizeof...(I)>;
 
 	template <typename... T>
-	static array<std::remove_cvref_t<std::tuple_element_t<0, tuple<T...>>>, sizeof...(I)> of(tuple<T...>&& t) {
+	static array<std::remove_reference_t<std::tuple_element_t<0, tuple<T...>>>, sizeof...(I)> of(tuple<T...>&& t) {
 		return {get<I>(t)...};
 	}
 };
