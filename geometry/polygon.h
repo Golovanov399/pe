@@ -1,6 +1,7 @@
 #pragma once
 
 #include "primitives/all.h"
+#include "../base/defines.h"
 
 template <typename T>
 struct Polygon {

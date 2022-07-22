@@ -6,6 +6,7 @@
 
 using std::istream, std::ostream, std::cout;
 using std::is_integral_v;
+using std::tie;
 
 template <typename T>
 struct Point {
