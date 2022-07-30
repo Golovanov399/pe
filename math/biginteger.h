@@ -260,6 +260,14 @@ struct BigInteger {
 		return res;
 	}
 
+	BigInteger operator -() const {
+		auto res = *this;
+		if (!digits.empty()) {
+			res.neg ^= 1;
+		}
+		return res;
+	}
+
 	BigInteger& operator *=(const BigInteger& ot) {
 		if (digits.empty() || ot.digits.empty()) {
 			digits = {};
@@ -355,6 +363,10 @@ struct BigInteger {
 			}
 			return s < 0 ? strong_ordering::less : s > 0 ? strong_ordering::greater : strong_ordering::equal;
 		}
+	}
+
+	bool operator ==(const BigInteger& ot) const {
+		return neg == ot.neg && digits == ot.digits;
 	}
 
 	BigInteger pow(u32 x) const {
