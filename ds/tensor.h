@@ -161,4 +161,11 @@ struct Tensor {
 		}
 		return data[i];
 	}
+
+	void swap(Tensor<T, dim>& b) {
+		shape.swap(b.shape);
+		subsizes.swap(b.subsizes);
+		std::swap(sz, b.sz);
+		std::swap(data, b.data);
+	}
 };
