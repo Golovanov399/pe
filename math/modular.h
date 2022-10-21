@@ -9,7 +9,7 @@ using std::istream, std::ostream;
 template <typename T>
 struct TypeModular {
 	using Type = typename decay<decltype(T::value)>::type;
-	using NextType = next_size<Type>::type;
+	using NextType = typename next_size<Type>::type;
 	Type val;
 
 	static constexpr Type mod() {
