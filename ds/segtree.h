@@ -17,6 +17,8 @@ using std::vector;
 template <typename Node>
 class SegTree {
 public:
+	SegTree() {}
+
 	explicit SegTree(int _n) {
 		n = 1;
 		while (n < _n) {
@@ -45,6 +47,10 @@ public:
 
 	Node get(int l, int r) {
 		return get(1, 0, n, l, r);
+	}
+
+	Node top() {
+		return (int)a.size() > 1 ? a[1] : Node();
 	}
 
 	template <typename... Args>
