@@ -9,7 +9,7 @@ struct Fenwick {
 	int n;
 	vector<V> a;
 
-	Fenwick(int _n): n(_n), a(_n) {}
+	Fenwick(int _n = 0): n(_n), a(_n) {}
 
 	void add(int pos, const V& x) {
 		while (pos < n) {
