@@ -441,6 +441,28 @@ struct BigInteger {
 		return _len(digits);
 	}
 
+	int to_int() const {
+		int res = 0;
+		for (auto x : digits) {
+			res = res * BASE + x;
+		}
+		if (neg) {
+			res = -res;
+		}
+		return res;
+	}
+
+	long long to_long() const {
+		long long res = 0;
+		for (auto x : digits) {
+			res = res * BASE + x;
+		}
+		if (neg) {
+			res = -res;
+		}
+		return res;
+	}
+
 	friend std::ostream& operator <<(std::ostream& ostr, const BigInteger& num) {
 		if (num.neg) {
 			ostr << "-";
