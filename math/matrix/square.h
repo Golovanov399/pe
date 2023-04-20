@@ -16,7 +16,7 @@ struct Matrix {
 	int n;
 	vector<vector<T>> a;
 
-	explicit Matrix(int _n): n(_n), a(_n, vector<T>(_n)) {}
+	explicit Matrix(int _n = 0): n(_n), a(_n, vector<T>(_n)) {}
 
 	static constexpr Matrix<T> id(int sz) {
 		Matrix<T> res(sz);
