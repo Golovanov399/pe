@@ -9,6 +9,8 @@ using std::vector;
 
 template <typename T, typename tag = no_fft_tag>
 struct Polynomial {
+	using Type = T;
+	using Tag = tag;
 	vector<T> coeff;
 
 	Polynomial() {}

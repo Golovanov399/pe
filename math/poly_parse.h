@@ -7,9 +7,9 @@
 
 using std::string;
 
-template <typename T>
+template <typename T, typename tag>
 struct PolynomialParser {
-	using Poly = Polynomial<T, no_fft_tag>;
+	using Poly = Polynomial<T, tag>;
 	string s;
 	int i;
 
@@ -168,7 +168,7 @@ struct PolynomialParser {
 	}
 };
 
-template <typename T>
-Polynomial<T, no_fft_tag> parse_poly(const string& s) {
-	return PolynomialParser<T>(s).parse_expr();
+template <typename Poly>
+Poly parse_poly(const string& s) {
+	return PolynomialParser<typename Poly::Type, typename Poly::Tag>(s).parse_expr();
 }
