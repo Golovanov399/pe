@@ -38,8 +38,8 @@ struct Segment {
 		return (contains(res) && ot.contains(res)) ? optional{res} : nullopt;
 	}
 
-	friend Point<T> intersection_point(const Segment& a, const Segment& b) {
-		return a.intersect(b);
+	friend optional<Point<T>> intersection_point(const Segment& a, const Segment& b) {
+		return a.intersection_point(b);
 	}
 
 	optional<Segment<T>> intersect(const Segment& ot) const {
