@@ -48,7 +48,7 @@ struct PolynomialParser {
 			}
 			if (s[i] == '^' || (i < (int)s.length() - 1 && s[i] == '*' && s[i + 1] == '*')) {
 				parse_pow_sign();
-				auto deg = parse_num()();
+				auto deg = parse_num();
 				last = last.pow(deg);
 			} else if (s[i] == '*' || s[i] == '/') {
 				if (op == '*') {
