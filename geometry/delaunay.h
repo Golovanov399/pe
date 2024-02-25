@@ -3,6 +3,8 @@
 #include "primitives/all.h"
 #include "../base/random.h"
 
+using std::array, std::pair;
+
 template <typename T>
 class Delaunay {
 public:
@@ -253,8 +255,8 @@ protected:
 	}
 
 	bool is_bad(int u, int v, int p0, int p1) {
-		return (ld)abs(cross(pts[u] - pts[p0], pts[v] - pts[p0])) * dot(pts[u] - pts[p1], pts[v] - pts[p1]) +
-			   (ld)abs(cross(pts[u] - pts[p1], pts[v] - pts[p1])) * dot(pts[u] - pts[p0], pts[v] - pts[p0]) < 0;
+		return (ld)std::abs(cross(pts[u] - pts[p0], pts[v] - pts[p0])) * dot(pts[u] - pts[p1], pts[v] - pts[p1]) +
+			   (ld)std::abs(cross(pts[u] - pts[p1], pts[v] - pts[p1])) * dot(pts[u] - pts[p0], pts[v] - pts[p0]) < 0;
 	}
 
 	void try_flip(vector<int>& to_flip, int tid, int i) {
