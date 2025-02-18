@@ -127,10 +127,21 @@ Gaussian<T> find_gaussian_with_prime_norm(next_size_t<T> p) {
 		assert(false);
 	}
 	int g = 2;
-	while (pw(g, (p - 1) / 2, p) != p - 1) {
-		g += 1;
+	if constexpr (is_same_v<T, int>) {
+		while (pw_big(g, (p - 1) / 2, p) != p - 1) {
+			g += 1;
+		}
+	} else {
+		while (pw(g, (p - 1) / 2, p) != p - 1) {
+			g += 1;
+		}
 	}
-	next_size_t<T> x = p, y = pw(g, (p - 1) / 4, p);
+	next_size_t<T> x = p, y;
+	if constexpr (is_same_v<T, int>) {
+		y = pw_big(g, (p - 1) / 4, p);
+	} else {
+		y = pw(g, (p - 1) / 4, p);
+	}
 	while (p / x < x) {
 		x %= y;
 		swap(x, y);
