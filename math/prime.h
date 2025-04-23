@@ -280,52 +280,50 @@ bool is_square_residue(int a, int p) {
 	return TypeModular<integral_variable<int>>(a).pow((p - 1) / 2) == 1;
 }
 
-int sqrt_mod(int a, int p) {
-	if (!is_square_residue(a, p)) {
-		return -1;
+int sqrt_mod(int x, int p) {
+	if (p == 2) {
+		return x;
 	}
-	if (a == 0) {
+	if (x == 0) {
 		return 0;
 	}
-	if (p == 2) {
-		return a;
+	if (pw(x, (p - 1) / 2, p) != 1) {
+		return -1;
 	}
 	if (p % 4 == 3) {
-		return pw(a, (p + 1) / 4, p);
+		return pw(x, (p + 1) / 4, p);
 	}
 
-	// tonelli-shanks starts here
-	int z = 1;
-	while (pw(z, (p - 1) / 2, p) == 1) {
-		++z;
+	const int q = (p - 1) >> __builtin_ctz(p - 1);
+	int nonres = 2;
+	while (pw(nonres, (p - 1) / 2, p) == 1) {
+		++nonres;
 	}
-	int q = p - 1;
-	int s = __builtin_ctz(q);
-	q >>= s;
-	int m = s;
-	long long c = pw(z, q, p);
-	long long t = pw(a, q, p);
-	long long r = pw(a, (q + 1) / 2, p);
-	while (true) {
-		if (t == 0) {
-			return 0;
+	auto z = pw(nonres, q, p);
+	auto r = pw(x, (q + 1) / 2, p);
+	auto t = pw(x, q, p);
+
+	auto first_unit_po2 = [&](int x) {
+		int res = 0;
+		while (x != 1) {
+			x = 1ll * x * x % p;
+			++res;
 		}
-		if (t == 1) {
-			return r;
+		return res;
+	};
+
+	int last_po2 = __builtin_ctz(p - 1);
+	while (t != 1) {
+		const int d = first_unit_po2(t);
+		while (last_po2 > d + 1) {
+			--last_po2;
+			z = 1ll * z * z % p;
 		}
-		auto tmp = t;
-		int i = 0;
-		while (tmp != 1) {
-			i += 1;
-			tmp = tmp * tmp % p;
-		}
-		long long b = c;
-		for (int j = 0; j < m - i - 1; ++j) {
-			b = b * b % p;
-		}
-		r = r * b % p;
-		c = b * b % p;
-		t = t * c % p;
-		m = i;
+		r = 1ll * r * z % p;
+		z = 1ll * z * z % p;
+		t = 1ll * t * z % p;
+		--last_po2;
 	}
+
+	return r;
 }
