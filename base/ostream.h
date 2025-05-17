@@ -13,6 +13,12 @@
 using std::ostream, std::cout;
 using std::make_tuple;
 
+template <typename T, typename U>
+ostream& operator <<(ostream& ostr, const std::pair<T, U>& p) {
+	return ostr << "(" << p.first << ", " << p.second << ")";
+}
+
+
 ostream& operator <<(ostream& ostr, __int128_t x) {
 	static constexpr int64_t BIG = 1e18;
 	if (x < 0) {
@@ -111,9 +117,3 @@ ostream& operator <<(ostream& ostr, const std::map<T, U>& mp) {
 	}
 	return ostr << "}";
 }
-
-template <typename T, typename U>
-ostream& operator <<(ostream& ostr, const std::pair<T, U>& p) {
-	return ostr << "(" << p.first << ", " << p.second << ")";
-}
-
